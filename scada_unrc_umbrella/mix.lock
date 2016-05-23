@@ -1,0 +1,1 @@
+%{"ex_modbus": {:git, "https://github.com/jwarwick/ex_modbus.git", "5d41464e1d90af7b490f1ad960d3f71001e1c81f", []}}
