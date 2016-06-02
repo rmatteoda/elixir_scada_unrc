@@ -19,6 +19,7 @@ defmodule SCADAMaster.Mixfile do
   # Type "mix help compile.app" for more information
   def application do
     [applications: [:logger],
+     env: [device_table: []],
      mod: {SCADAMaster, []}]
   end
 

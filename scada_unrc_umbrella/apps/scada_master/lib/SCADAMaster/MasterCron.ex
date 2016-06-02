@@ -16,13 +16,14 @@ defmodule SCADAMaster.MasterCron do
     Logger.info "Connectiong to Senpron "
     # Save in DB
     {:ok, pid} = ExModbus.Client.start_link {192, 168, 0, 106}
-    IO.puts "Connected Success"
+    Logger.info "Connected Success"
     
-    IO.puts "Reading register data"
-    #ExModbus.Client.read_data pid, 1, 0x1, 2
+    Logger.info "Reading register data"
+    ExModbus.Client.read_data pid, 1, 0x1, 2
+    Logger.info "Readded Success"
     
     # Start the timer again
-    Process.send_after(self(), :work, 30 * 1000) # In 1 minute
+    #Process.send_after(self(), :work, 30 * 1000) # In 1 minute
 
     {:noreply, state}
   end
