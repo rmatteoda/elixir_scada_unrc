@@ -1,4 +1,4 @@
-defmodule SCADAMaster.MasterCron do
+defmodule SCADAMaster.Device.Scheduler do
   use GenServer
   require Logger
 
@@ -13,11 +13,11 @@ defmodule SCADAMaster.MasterCron do
 
   def handle_info(:work, state) do
     # Connect to device and read register (V, I, etc)
-    dev_table = Application.get_env(:scada_master,:device_table)
-    ip = dev_table[:trafo1]
+    #dev_table = Application.get_env(:scada_master,:device_table)
+    #ip = dev_table[:trafo1]
     
     Logger.info "Connectiong to Senpron at ip " 
-    Logger.info ip
+    #Logger.info ip
     # Save in DB
     {:ok, pid} = ExModbus.Client.start_link {192, 168, 0, 106}
     Logger.info "Connected Success"

@@ -6,6 +6,13 @@ use Mix.Config
 config :scada_master, :device_table,
        [{:trafo1, "192.168.0.106"},
         {:trafo2, "192.168.0.107"}]
+
+# configure the register to be read for each device (reference values from sempron ).
+config :scada_master, :register_table,
+       [{:v, "1"},
+        {:l, "3"},
+        {:i, "5"}]
+
 # This configuration is loaded before any dependency and is restricted
 # to this project. If another project depends on this project, this
 # file won't be loaded nor affect the parent project. For this reason,
