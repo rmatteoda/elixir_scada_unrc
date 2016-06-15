@@ -7,28 +7,24 @@ defmodule SCADAMaster.Device.Scheduler do
   end
 
   def init(state) do
-    Process.send_after(self(), :work, 30 * 1000) # In 1 minute
+    Process.send_after(self(), :work, 30 * 1000) # In 1 minute - ver de agregar tiempo configurado
     {:ok, state}
   end
 
   def handle_info(:work, state) do
-    # Connect to device and read register (V, I, etc)
-    #dev_table = Application.get_env(:scada_master,:device_table)
-    #ip = dev_table[:trafo1]
+    Logger.info "Scheduler handler " 
     
-    Logger.info "Connectiong to Senpron at ip " 
-    #Logger.info ip
-    # Save in DB
-    {:ok, pid} = ExModbus.Client.start_link {192, 168, 0, 106}
-    Logger.info "Connected Success"
-    
-    Logger.info "Reading register data"
-    ExModbus.Client.read_data pid, 1, 0x1, 2
-    Logger.info "Readded Success"
-    
-    # Start the timer again
-    #Process.send_after(self(), :work, 30 * 1000) # In 1 minute
+    Logger.info "Init Substation Loader "    
+    {:ok, loader} = SCADAMaster.Device.Loader.start_link       
+    SCADAMaster.Device.Loader.load(loader);
 
+    # Start the timer again
+    Process.send_after(self(), :work, 30 * 1000) # In 1 minute - ver de agregar tiempo configurado
     {:noreply, state}
   end
 end
+    #{:ok, pid} = ExModbus.Client.start_link {192, 168, 0, 106}
+    
+    #Logger.info "Reading register data"
+    #ExModbus.Client.read_data pid, 1, 0x1, 2
+    #Logger.info "Readded Success"

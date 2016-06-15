@@ -1,38 +1,37 @@
 defmodule SCADAMaster.Device.Substation do
 
- require Logger
-
- @doc """
+  @doc """
   Starts a 
   """
-  def start_link(substation_name) do
-    Agent.start_link(fn -> [] end, name: substation_name)
+  # def start_link(substation_name,substation_ip) do
+  #   Agent.start_link(fn -> %{} end, name: substation_name, ip: substation_ip)
+  # end
+  
+  def start_link do
+    Agent.start_link(fn -> %{} end)
   end
 
   @doc """
   Get the data currently in the `TABLE`.
   """
-  def get(substation) do
-    Agent.get(substation, fn list -> list end)
+  def get(substation, key) do
+     Agent.get(substation, &Map.get(&1, key))
   end
 
   @doc """
-  Pushes `value` into the door.
+  Puts the `value` for the given `key` in the `bucket`.
   """
-  def push(substation, value) do
-    Agent.update(substation, fn list -> [value|list] end)
+  def put(substation, key, value) do
+    Agent.update(substation, &Map.put(&1, key, value))
   end
 
   @doc """
-  Pops a value from the `CONNECTOR`.
-
-  Returns `{:ok, value}` if there is a value
-  or `:error` if the hole is currently empty.
+  Deletes `key` from `bucket`.
+  Returns the current value of `key`, if `key` exists.
   """
-  def pop(substation) do
-    Agent.get_and_update(substation, fn
-      []    -> {:error, []}
-      [h|t] -> {{:ok, h}, t}
+  def delete(substation, key) do
+    Agent.get_and_update(substation, fn dict->
+      Map.pop(dict, key)
     end)
   end
 end
