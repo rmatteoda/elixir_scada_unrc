@@ -7,7 +7,7 @@ defmodule SCADAMaster.Device.Scheduler do
   end
 
   def init(state) do
-    Process.send_after(self(), :work, 30 * 1000) # In 1 minute - ver de agregar tiempo configurado
+    Process.send_after(self(), :work, 15 * 1000) # In 1 minute - ver de agregar tiempo configurado
     {:ok, state}
   end
 
@@ -19,7 +19,7 @@ defmodule SCADAMaster.Device.Scheduler do
     SCADAMaster.Device.Loader.load(loader);
 
     # Start the timer again
-    Process.send_after(self(), :work, 30 * 1000) # In 1 minute - ver de agregar tiempo configurado
+    Process.send_after(self(), :work, 15 * 1000) # In 1 minute - ver de agregar tiempo configurado
     {:noreply, state}
   end
 end

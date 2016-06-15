@@ -16,7 +16,7 @@ defmodule SCADAMaster.Device.Collector do
   recorrer la tabla de device y crear por cada key una substation con key, ip .
   """
   def collect(server,substation) do
-    GenServer.cast(server, substation)
+    GenServer.cast(server, {:collect, substation})
   end
 
   ## Server Callbacks
@@ -30,18 +30,22 @@ defmodule SCADAMaster.Device.Collector do
       {:noreply}
   end
 
-  def handle_cast(substation) do
-    #ip_sub = SCADAMaster.Device.Substation.get(substation,"ip")
+  def handle_cast({:push, item}, state) do
+    {:noreply, [item|state]}
+  end
+
+  def handle_cast({:collect, substation}, state) do
+    ip_sub = SCADAMaster.Device.Substation.get(substation,"ip")
     Logger.info "Collect Substation 1 from ip "
-    # Logger.info ip_sub
+    Logger.info ip_sub
     
-    # SCADAMaster.Device.Substation.put(substation,"v",3)
-    # volt = SCADAMaster.Device.Substation.get(substation,"v")
-    # Logger.info "Substation 1 voltage "
-    # Logger.info volt
+    SCADAMaster.Device.Substation.put(substation,"v",3)
+    volt = SCADAMaster.Device.Substation.get(substation,"v")
+    Logger.info "Substation 1 voltage "
+    Logger.info volt
     #reg_table  = Application.get_env(:scada_master,:register_table) #registrer table configured    
     
-    {:noreply}
+    {:noreply, state}
   end
 
 end
