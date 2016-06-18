@@ -28,19 +28,20 @@ defmodule SCADAMaster.Device.Loader do
   end
 
   def handle_cast({:load}, {dev_table}) do
-    #read config for substatioon for first element
-    subconfig = List.first(dev_table)
-    Logger.debug "Create first substation from config" 
-    {:ok, substation} = SCADAMaster.Device.Substation.start_link
+    #read config for each substatioon 
+    Enum.each(dev_table, fn(subconfig) -> 
+      Logger.debug "Create first substation from config" 
+      {:ok, substation} = SCADAMaster.Device.Substation.start_link
     
-    Logger.debug "Set ip and name for substation" 
-    SCADAMaster.Device.Substation.put(substation,"ip",subconfig.ip)
-    SCADAMaster.Device.Substation.put(substation,"subname",subconfig.name)
+      Logger.debug "Set ip and name for substation" 
+      SCADAMaster.Device.Substation.put(substation,"ip",subconfig.ip)
+      SCADAMaster.Device.Substation.put(substation,"subname",subconfig.name)
 
-    Logger.debug "Collect values from device in substation" 
-    {:ok, collector} = SCADAMaster.Device.Collector.start_link
-    SCADAMaster.Device.Collector.collect(collector,substation)
-    
+      Logger.debug "Collect values from device in substation" 
+      {:ok, collector} = SCADAMaster.Device.Collector.start_link
+      SCADAMaster.Device.Collector.collect(collector,substation)
+    end)
+
     {:noreply, {dev_table}}
   end
 

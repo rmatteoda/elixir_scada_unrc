@@ -27,10 +27,10 @@ defmodule SCADAMaster.Device.Collector do
   def handle_cast({:collect, substation}, state) do
     ip_sub = SCADAMaster.Device.Substation.get(substation,"ip")
     Logger.debug "Collect Substation values from device ip " <> ip_sub  
-      
+
     SCADAMaster.Device.Substation.put(substation,"v",3)
     volt = SCADAMaster.Device.Substation.get(substation,"v")
-    Logger.debug "Substation 1 voltage "
+    Logger.debug "Substation voltage "
     Logger.debug volt
     
     {:noreply, state}
