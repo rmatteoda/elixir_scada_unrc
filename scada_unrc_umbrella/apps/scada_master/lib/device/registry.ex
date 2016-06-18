@@ -1,4 +1,5 @@
 defmodule SCADAMaster.Device.Registry do
+  
   use GenServer
   require Logger
 

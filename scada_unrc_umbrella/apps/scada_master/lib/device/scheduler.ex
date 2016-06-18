@@ -7,24 +7,18 @@ defmodule SCADAMaster.Device.Scheduler do
   end
 
   def init(state) do
+    Logger.debug "Scheduler handler " 
     Process.send_after(self(), :work, 15 * 1000) # In 1 minute - ver de agregar tiempo configurado
-    {:ok, state}
+    {:ok, loader} = SCADAMaster.Device.Loader.start_link       
+    {:ok, loader}
   end
 
-  def handle_info(:work, state) do
-    Logger.info "Scheduler handler " 
-    
-    Logger.info "Init Substation Loader "    
-    {:ok, loader} = SCADAMaster.Device.Loader.start_link       
+  def handle_info(:work, loader) do
+    #load substation values
     SCADAMaster.Device.Loader.load(loader);
 
     # Start the timer again
     Process.send_after(self(), :work, 15 * 1000) # In 1 minute - ver de agregar tiempo configurado
-    {:noreply, state}
+    {:noreply, loader}
   end
 end
-    #{:ok, pid} = ExModbus.Client.start_link {192, 168, 0, 106}
-    
-    #Logger.info "Reading register data"
-    #ExModbus.Client.read_data pid, 1, 0x1, 2
-    #Logger.info "Readded Success"
