@@ -20,7 +20,6 @@ defmodule SCADAMaster.Device.Loader do
 
   ## Server Callbacks
   def init(:ok) do
-    Logger.debug "Set config tables " 
     dev_table = Application.get_env(:scada_master,:device_table) #save the device table configured    
     {:ok, {dev_table}}
   end
@@ -28,12 +27,10 @@ defmodule SCADAMaster.Device.Loader do
   def handle_cast({:load}, {dev_table}) do
     #read config for each substatioon 
     Enum.each(dev_table, fn(subconfig) -> 
-      #Logger.debug "Create first substation from config" 
       {:ok, substation} = SCADAMaster.Device.Substation.start_link
     
-      Logger.debug "Set ip and name for substation" 
       SCADAMaster.Device.Substation.put(substation,"ip",subconfig.ip)
-      SCADAMaster.Device.Substation.put(substation,"subname",subconfig.name)
+      SCADAMaster.Device.Substation.put(substation,"name",subconfig.name)
 
       {:ok, collector} = SCADAMaster.Device.Collector.start_link
       SCADAMaster.Device.Collector.collect(collector,substation)

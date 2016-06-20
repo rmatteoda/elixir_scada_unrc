@@ -1,7 +1,6 @@
 # SCADAMaster
 
-**TODO: Add description**
-#para la DB
+#to create DB, migrate scheme and seed first data
 * `mix do deps.get, compile`
 * `mix ecto.create`
 * `mix ecto.migrate`
@@ -9,17 +8,14 @@
 * `iex -S mix`
 export PATH=$PATH:/Applications/Postgres.app/Contents/Versions/latest/bin
 
-Diseño:
-
-- Procesos, Agents y GenServers
+Diseño TODO:
 - Supervisor Tree
 - Task
-- DB (cual usar o guardar en un archivo)
-- Configuracion (ip modbus, port, registros a leer, mastercron time)
-- Logger estrategia
+- Logger definit estrategia
+- Test
 - Como se ejecuta siempre : mix run --no-halt?
-- Monitoreo de la app o visualizacion de datos
 - Manejar modbus tpc y modbus rtu
+
 ## Installation
 
 If [available in Hex](https://hex.pm/docs/publish), the package can be installed as:
