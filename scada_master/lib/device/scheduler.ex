@@ -6,8 +6,8 @@ defmodule SCADAMaster.Device.Scheduler do
     GenServer.start_link(__MODULE__, %{})
   end
 
-  def init(state) do
-    Logger.debug "Scheduler handler " 
+  def init(loader) do
+    Logger.debug "Start System from Scheduler handler " 
     Process.send_after(self(), :work, 15 * 1000) # In 1 minute - ver de agregar tiempo configurado
     {:ok, loader} = SCADAMaster.Device.Loader.start_link       
     {:ok, loader}
@@ -18,7 +18,7 @@ defmodule SCADAMaster.Device.Scheduler do
     SCADAMaster.Device.Loader.load(loader);
 
     # Start the timer again
-    Process.send_after(self(), :work, 15 * 1000) # In 1 minute - ver de agregar tiempo configurado
+    Process.send_after(self(), :work, 45 * 1000) # In 1 minute - ver de agregar tiempo configurado
     {:noreply, loader}
   end
 end

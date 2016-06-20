@@ -4,7 +4,6 @@ defmodule SCADAMaster.Device.Collector do
   require Logger
 
   ## Client API
-
   @doc """
   Starts the collector.
   """
@@ -26,12 +25,12 @@ defmodule SCADAMaster.Device.Collector do
 
   def handle_cast({:collect, substation}, state) do
     ip_sub = SCADAMaster.Device.Substation.get(substation,"ip")
-    Logger.debug "Collect Substation values from device ip " <> ip_sub  
+    #Logger.debug "Collect Substation values from device ip " <> ip_sub  
 
-    SCADAMaster.Device.Substation.put(substation,"voltage",3)
-    volt = SCADAMaster.Device.Substation.get(substation,"voltage")
-    Logger.debug "Save Substation voltage "
+    #SCADAMaster.Device.Substation.put(substation,"voltage",3)
     
+    SCADAMaster.Storage.StorageBind.dump_substation(substation)
+
     {:noreply, state}
   end
 
