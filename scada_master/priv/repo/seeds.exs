@@ -31,7 +31,7 @@ defmodule Seeds do
 
   # Import substations
   defp import_substations([]), do: nil
-  defp import_substations(substation, [{substation_name,device}|t]) do
+  defp import_substations([{substation_name,device}|t]) do
     substation = ScadaMaster.Repo.insert!(%SCADAMaster.Storage.Substation{name: substation_name}, log: false)
     import_devices substation, device
     import_substations t
