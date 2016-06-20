@@ -28,10 +28,9 @@ defmodule SCADAMaster.Device.Collector do
     ip_sub = SCADAMaster.Device.Substation.get(substation,"ip")
     Logger.debug "Collect Substation values from device ip " <> ip_sub  
 
-    SCADAMaster.Device.Substation.put(substation,"v",3)
-    volt = SCADAMaster.Device.Substation.get(substation,"v")
-    Logger.debug "Substation voltage "
-    Logger.debug volt
+    SCADAMaster.Device.Substation.put(substation,"voltage",3)
+    volt = SCADAMaster.Device.Substation.get(substation,"voltage")
+    Logger.debug "Save Substation voltage "
     
     {:noreply, state}
   end

@@ -4,7 +4,6 @@ defmodule SCADAMaster.Device.Loader do
   require Logger
 
   ## Client API
-
   @doc """
   Starts the collector.
   """
@@ -23,7 +22,6 @@ defmodule SCADAMaster.Device.Loader do
   def init(:ok) do
     Logger.debug "Set config tables " 
     dev_table = Application.get_env(:scada_master,:device_table) #save the device table configured    
-    #reg_table  = Application.get_env(:scada_master,:register_table) #registrer table configured    
     {:ok, {dev_table}}
   end
 
