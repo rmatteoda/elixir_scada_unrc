@@ -13,7 +13,7 @@ defmodule SCADAMaster.Mixfile do
   # Type "mix help compile.app" for more information
   def application do
     [mod: {SCADAMaster, []},
-     applications: [:postgrex, :ecto, :logger]]
+     applications: [:postgrex, :ecto, :logger, :logger_file_backend]]
   end
 
   defp aliases do
@@ -27,6 +27,7 @@ defmodule SCADAMaster.Mixfile do
   defp deps do
     [{:ex_modbus, git: "https://github.com/jwarwick/ex_modbus.git"},
      {:postgrex, ">= 0.0.0"},
-     {:ecto, ">= 0.0.0"}]
+     {:ecto, ">= 0.0.0"},
+     {:logger_file_backend, ">= 0.0.4"}]
   end
 end

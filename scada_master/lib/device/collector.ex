@@ -25,21 +25,29 @@ defmodule SCADAMaster.Device.Collector do
   end
 
   def handle_cast({:collect, substation}, state) do
-    {:ok, substation} = read_modbus(substation)
     Logger.debug "Collect called from supervisor " 
-    SCADAMaster.Storage.StorageBind.dump_substation(substation)
+
+    case read_modbus(substation) do
+      {:ok, substation} -> SCADAMaster.Storage.StorageBind.dump_substation(substation)
+      {:error, msgerror} -> Logger.error msgerror
+    end
+
     {:noreply, state}
   end
 
   defp read_modbus(substation) do
-    ip_substation = SCADAMaster.Device.Substation.get(substation,"ip")
-    
+    ip_substation = SCADAMaster.Device.Substation.get(substation,"ip")    
     SCADAMaster.Device.Substation.put(substation,"voltage",3.0)
     SCADAMaster.Device.Substation.put(substation,"current",1)
-    #{:ok, pid} = ExModbus.Client.start_link %{ip: ip_substation}
-    #ExModbus.Client.read_data pid, 1, 0x1, 2
-
-    {:ok, substation}
+    
+    try do
+      #{:ok, pid} = ExModbus.Client.start_link {ip_substation}
+      #ExModbus.Client.read_data pid, 1, 0x1, 2
+      {:ok, substation}
+    rescue
+      e -> {:error, "read_modbus: modbus client error for substation ip " <> ip_substation}
+    end
+    
   end
 
 end

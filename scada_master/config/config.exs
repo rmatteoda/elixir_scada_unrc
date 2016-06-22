@@ -16,4 +16,19 @@ config :scada_master, :register_table,
 config :scada_master,
   ecto_repos: [ScadaMaster.Repo]
 
+# log config 
+config :logger,
+  backends: [{LoggerFileBackend, :debug_log}, :console]
+
+config :logger, :debug_log,
+  path: "log/debug.log",
+  level: :debug
+
+# config :logger,
+#   backends: [{LoggerFileBackend, :error_log}, :console]
+
+# config :logger, :error_log,
+#   path: "log/error.log",
+#   level: :error
+
 import_config "#{Mix.env}.exs"

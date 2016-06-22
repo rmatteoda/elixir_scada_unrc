@@ -19,6 +19,7 @@ defmodule SCADAMaster.Storage.StorageBind do
     rescue
       e in Ecto.QueryError -> Logger.error "dump_substation: find_substation_by_name Ecto.QueryError "
       e in DBConnection.ConnectionError -> Logger.error "dump_substation: find_substation_by_name DBConnection.ConnectionError "
+      e in UndefinedFunctionError -> Logger.error "dump_substation: UndefinedFunctionError "
     end
   end
 
