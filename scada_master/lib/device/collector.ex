@@ -8,6 +8,7 @@ defmodule SCADAMaster.Device.Collector do
   Starts the collector.
   """
   def start_link do
+    Logger.debug "Collector started from supervisor " 
     GenServer.start_link(__MODULE__, :ok, [])
   end
 
@@ -25,7 +26,9 @@ defmodule SCADAMaster.Device.Collector do
 
   def handle_cast({:collect, substation}, state) do
     {:ok, substation} = read_modbus(substation)
-    SCADAMaster.Storage.StorageBind.dump_substation(substation)
+    Logger.debug "Collect called from supervisor " 
+    
+    #SCADAMaster.Storage.StorageBind.dump_substation(substation)
     {:noreply, state}
   end
 

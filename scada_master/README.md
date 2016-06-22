@@ -11,7 +11,8 @@ export PATH=$PATH:/Applications/Postgres.app/Contents/Versions/latest/bin
 Diseño TODO:
 - Supervisor Tree
 - Task
-- Logger definit estrategia
+- Logger definir estrategia
+- Definir DB tables and schemes
 - Test
 - Como se ejecuta siempre : mix run --no-halt?
 - Manejar modbus tpc y modbus rtu

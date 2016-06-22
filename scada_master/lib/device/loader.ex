@@ -32,7 +32,8 @@ defmodule SCADAMaster.Device.Loader do
       SCADAMaster.Device.Substation.put(substation,"ip",subconfig.ip)
       SCADAMaster.Device.Substation.put(substation,"name",subconfig.name)
 
-      {:ok, collector} = SCADAMaster.Device.Collector.start_link
+      #{:ok, collector} = SCADAMaster.Device.Collector.start_link
+      {:ok, collector} = SCADAMaster.Device.Supervisor.start_collector
       SCADAMaster.Device.Collector.collect(collector,substation)
     end)
 
