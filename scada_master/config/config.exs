@@ -18,17 +18,15 @@ config :scada_master,
 
 # log config 
 config :logger,
-  backends: [{LoggerFileBackend, :debug_log}, :console]
+  backends: [{LoggerFileBackend, :debug},
+             {LoggerFileBackend, :error}]
 
-config :logger, :debug_log,
+config :logger, :debug,
   path: "log/debug.log",
   level: :debug
 
-# config :logger,
-#   backends: [{LoggerFileBackend, :error_log}, :console]
-
-# config :logger, :error_log,
-#   path: "log/error.log",
-#   level: :error
+config :logger, :error,
+  path: "log/error.log",
+  level: :error
 
 import_config "#{Mix.env}.exs"

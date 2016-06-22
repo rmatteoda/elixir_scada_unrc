@@ -8,10 +8,10 @@
 * `iex -S mix`
 export PATH=$PATH:/Applications/Postgres.app/Contents/Versions/latest/bin
 
-Diseño TODO:
-- Supervisor Tree
-- Task
-- Logger definir estrategia
+TODO:
+- Supervisor Tree - LISTO?
+- Task?
+- leer datos del equipo y pasar a valor float
 - Definir DB tables and schemes
 - Test
 - Como se ejecuta siempre e instalar en windows: mix run --no-halt?

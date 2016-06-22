@@ -12,8 +12,10 @@ defmodule Repo.CreateTables do
     create index(:device, [:substation_id])
 
     create table(:substations) do
-      add :name, :string, size: 40, null: false
+      add :name, :string, size: 40, null: false, unique: true
     end
+
+    create unique_index(:substations, [:name], name: :unique_names)
   end
 
   def down do

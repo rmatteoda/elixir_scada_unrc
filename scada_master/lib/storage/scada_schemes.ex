@@ -4,6 +4,7 @@ defmodule SCADAMaster.Storage.Substation do
     has_many :local_device, SCADAMaster.Storage.Device
     field :name, :string
   end
+  @required_fields ~w(name)
 end
 
 defmodule SCADAMaster.Storage.Device do
