@@ -27,17 +27,16 @@ defmodule SCADAMaster.Device.Collector do
   def handle_cast({:collect, substation}, state) do
     {:ok, substation} = read_modbus(substation)
     Logger.debug "Collect called from supervisor " 
-    
-    #SCADAMaster.Storage.StorageBind.dump_substation(substation)
+    SCADAMaster.Storage.StorageBind.dump_substation(substation)
     {:noreply, state}
   end
 
   defp read_modbus(substation) do
-    ip_sub = SCADAMaster.Device.Substation.get(substation,"ip")
+    ip_substation = SCADAMaster.Device.Substation.get(substation,"ip")
     
     SCADAMaster.Device.Substation.put(substation,"voltage",3.0)
     SCADAMaster.Device.Substation.put(substation,"current",1)
-    #{:ok, pid} = ExModbus.Client.start_link {192, 168, 0, 106}
+    #{:ok, pid} = ExModbus.Client.start_link %{ip: ip_substation}
     #ExModbus.Client.read_data pid, 1, 0x1, 2
 
     {:ok, substation}

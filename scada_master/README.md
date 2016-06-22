@@ -10,6 +10,7 @@ export PATH=$PATH:/Applications/Postgres.app/Contents/Versions/latest/bin
 
 Diseño TODO:
 - Supervisor Tree
+- Manage errors (DB connection and modbus connection or read)
 - Task
 - Logger definir estrategia
 - Definir DB tables and schemes

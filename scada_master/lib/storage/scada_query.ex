@@ -7,8 +7,7 @@ defmodule SCADAMaster.Storage.ScadaQuery do
         where: sb.name == ^substation_name,
         select: sb
 
-    # Returns %{} structs matching the query
-    ScadaMaster.Repo.all(query, log: false)
+	ScadaMaster.Repo.all(query, log: false)
   end
 
 end
