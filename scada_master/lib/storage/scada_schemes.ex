@@ -16,8 +16,8 @@ defmodule SCADAMaster.Storage.Device do
     field :voltage_b, :float, default: 0.0
     field :voltage_c, :float, default: 0.0
     field :current_a, :float, default: 0.0
-    field :current_a, :float, default: 0.0
-    field :current_a, :float, default: 0.0
+    field :current_b, :float, default: 0.0
+    field :current_c, :float, default: 0.0
     field :activepower_a, :float, default: 0.0
     field :reactivepower_a, :float, default: 0.0
     timestamps

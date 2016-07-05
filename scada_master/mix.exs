@@ -6,7 +6,8 @@ defmodule SCADAMaster.Mixfile do
      version: "0.0.1",
      elixir: "~> 1.2",
      deps: deps,
-     aliases: aliases]
+     aliases: aliases,
+     escript: [main_module: SCADAMaster.Main]]
   end
 
   # Configuration for the OTP application
