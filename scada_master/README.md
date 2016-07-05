@@ -15,6 +15,7 @@ TODO:
 - Definir DB tables and schemes
 - Test
 - Como se ejecuta siempre e instalar en windows: mix run --no-halt?
+- revisar mnesia https://elixirschool.com/lessons/specifics/mnesia/
 
 ## Installation
 

@@ -2,7 +2,7 @@ use Mix.Config
 
 config :scada_master, ScadaMaster.Repo,
   adapter: Ecto.Adapters.Postgres,
-  database: "ecto_scada_master_test",
+  database: "scada_master_unrc",
   username: "postgres",
   password: "postgres",
   hostname: "localhost",

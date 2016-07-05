@@ -5,8 +5,14 @@ defmodule Repo.CreateTables do
     create table(:device) do
       add :substation_id, :integer
       add :devdate,   :date
-      add :voltage,   :float
-      add :current, :integer
+      add :voltage_a,   :float
+      add :voltage_b,   :float
+      add :voltage_c,   :float
+      add :current_a, :float
+      add :current_b, :float
+      add :current_c, :float
+      add :activepower_a, :float
+      add :reactivepower_a, :float
       timestamps
     end
     create index(:device, [:substation_id])

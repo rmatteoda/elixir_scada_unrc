@@ -12,8 +12,14 @@ defmodule SCADAMaster.Storage.Device do
   schema "device" do
     belongs_to :substation, SCADAMaster.Storage.Substation
     field :devdate, Ecto.Date
-    field :voltage, :float, default: 0.0
-    field :current, :integer, default: 0
+    field :voltage_a, :float, default: 0.0
+    field :voltage_b, :float, default: 0.0
+    field :voltage_c, :float, default: 0.0
+    field :current_a, :float, default: 0.0
+    field :current_a, :float, default: 0.0
+    field :current_a, :float, default: 0.0
+    field :activepower_a, :float, default: 0.0
+    field :reactivepower_a, :float, default: 0.0
     timestamps
   end
 end

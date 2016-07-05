@@ -37,8 +37,14 @@ defmodule SCADAMaster.Device.Collector do
 
   defp read_modbus(substation) do
     ip_substation = SCADAMaster.Device.Substation.get(substation,"ip")    
-    SCADAMaster.Device.Substation.put(substation,"voltage",3.0)
-    SCADAMaster.Device.Substation.put(substation,"current",1)
+    SCADAMaster.Device.Substation.put(substation,"voltage_a",3.0)
+    SCADAMaster.Device.Substation.put(substation,"voltage_b",3.0)
+    SCADAMaster.Device.Substation.put(substation,"voltage_v",3.0)
+    SCADAMaster.Device.Substation.put(substation,"current_a",1.0)
+    SCADAMaster.Device.Substation.put(substation,"current_b",1.0)
+    SCADAMaster.Device.Substation.put(substation,"current_c",1.0)
+    SCADAMaster.Device.Substation.put(substation,"actpower_a",1.0)
+    SCADAMaster.Device.Substation.put(substation,"reactpower_a",1.0)
     
     try do
       #{:ok, pid} = ExModbus.Client.start_link {ip_substation}
