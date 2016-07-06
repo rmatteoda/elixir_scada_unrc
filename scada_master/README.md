@@ -14,6 +14,8 @@ TODO:
 - leer datos del equipo y pasar a valor float
 - Test
 - Como se ejecuta siempre e instalar en windows: mix run --no-halt? - escript - https://github.com/bitwalker/exrm?
+   http://tjheeta.github.io/2014/12/09/elixir-app-startup-and-runit/ 
+   http://stackoverflow.com/questions/3513944/erlang-application-launch-on-a-windows-server
 - revisar mnesia https://elixirschool.com/lessons/specifics/mnesia/
 
 ## Installation
