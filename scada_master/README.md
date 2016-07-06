@@ -12,9 +12,8 @@ TODO:
 - Supervisor Tree - LISTO?
 - Task?
 - leer datos del equipo y pasar a valor float
-- Definir DB tables and schemes
 - Test
-- Como se ejecuta siempre e instalar en windows: mix run --no-halt?
+- Como se ejecuta siempre e instalar en windows: mix run --no-halt? - escript - https://github.com/bitwalker/exrm?
 - revisar mnesia https://elixirschool.com/lessons/specifics/mnesia/
 
 ## Installation

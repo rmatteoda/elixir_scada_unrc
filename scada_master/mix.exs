@@ -29,6 +29,7 @@ defmodule SCADAMaster.Mixfile do
     [{:ex_modbus, git: "https://github.com/jwarwick/ex_modbus.git"},
      {:postgrex, ">= 0.0.0"},
      {:ecto, ">= 0.0.0"},
-     {:logger_file_backend, ">= 0.0.4"}]
+     {:logger_file_backend, ">= 0.0.4"},
+     {:exrm, "~> 0.18.1"}]
   end
 end
