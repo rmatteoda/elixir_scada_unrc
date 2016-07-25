@@ -9,8 +9,8 @@ defmodule SCADAMaster.Storage.StorageBind do
       
       substation_db_id = List.first(found).id
       
-      collected_day = Ecto.Date.utc
-
+      collected_time =Ecto.DateTime.utc
+      
       substation_voltage_a = SCADAMaster.Device.Substation.get(substation,"voltage_a")
       substation_voltage_b = SCADAMaster.Device.Substation.get(substation,"voltage_b")
       substation_voltage_c = SCADAMaster.Device.Substation.get(substation,"voltage_c")
@@ -21,7 +21,7 @@ defmodule SCADAMaster.Storage.StorageBind do
       substation_reactpower_a = SCADAMaster.Device.Substation.get(substation,"reactpower_a")
       
       Logger.debug "Stora device-substations values into DB  "
-      ScadaMaster.Repo.insert!(%SCADAMaster.Storage.Device{devdate: collected_day, 
+      ScadaMaster.Repo.insert!(%SCADAMaster.Storage.Device{devdate: collected_time, 
                                 voltage_a: substation_voltage_a, 
                                 voltage_b: substation_voltage_b, 
                                 voltage_c: substation_voltage_c, 

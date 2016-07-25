@@ -4,7 +4,7 @@ defmodule Repo.CreateTables do
   def up do
     create table(:device) do
       add :substation_id, :integer
-      add :devdate,   :date
+      add :devdate,   :datetime
       add :voltage_a,   :float
       add :voltage_b,   :float
       add :voltage_c,   :float

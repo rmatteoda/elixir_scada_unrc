@@ -11,7 +11,7 @@ defmodule SCADAMaster.Storage.Device do
   use Ecto.Schema
   schema "device" do
     belongs_to :substation, SCADAMaster.Storage.Substation
-    field :devdate, Ecto.Date
+    field :devdate, Ecto.DateTime, default: Ecto.DateTime.local
     field :voltage_a, :float, default: 0.0
     field :voltage_b, :float, default: 0.0
     field :voltage_c, :float, default: 0.0

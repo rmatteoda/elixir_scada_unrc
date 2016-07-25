@@ -9,14 +9,17 @@
 export PATH=$PATH:/Applications/Postgres.app/Contents/Versions/latest/bin
 
 TODO:
-- Supervisor Tree - LISTO?
 - Task?
-- leer datos del equipo y pasar a valor float
-- Test
+- Correr app en Ubuntu on init.d
+- logger file name with timestamp
+- Test de funcionamiento de todo y condiciones de falla
 - Como se ejecuta siempre e instalar en windows: mix run --no-halt? - escript - https://github.com/bitwalker/exrm  ?
    http://tjheeta.github.io/2014/12/09/elixir-app-startup-and-runit/ 
    http://stackoverflow.com/questions/3513944/erlang-application-launch-on-a-windows-server
+   https://github.com/johnhamelink/exrm_deb
 - revisar mnesia https://elixirschool.com/lessons/specifics/mnesia/
+
+{:ok, pid} = ExModbus.Client.start_link %{ip: '192.168.88.112'}
 
 ## Installation
 
