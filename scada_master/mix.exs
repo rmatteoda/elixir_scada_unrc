@@ -14,7 +14,7 @@ defmodule SCADAMaster.Mixfile do
   # Type "mix help compile.app" for more information
   def application do
     [mod: {SCADAMaster, []},
-     applications: [:postgrex, :ecto, :logger, :logger_file_backend]]
+     applications: [:postgrex, :ecto, :logger, :logger_file_backend, :ex_modbus]]
   end
 
   defp aliases do
@@ -30,6 +30,6 @@ defmodule SCADAMaster.Mixfile do
      {:postgrex, ">= 0.0.0"},
      {:ecto, ">= 0.0.0"},
      {:logger_file_backend, ">= 0.0.4"},
-     {:exrm, "~> 0.18.1"}]
+     {:exrm, "~> 1.0.8"}]
   end
 end

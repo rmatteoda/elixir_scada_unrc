@@ -53,9 +53,14 @@ defmodule SCADAMaster.Device.Collector do
       {:ok, val} = read_register(ip_substation,@voltage_a_offs)
       SCADAMaster.Device.Substation.put(substation,"voltage_a",val)
       
-      SCADAMaster.Device.Substation.put(substation,"voltage_b",3.0)
-      SCADAMaster.Device.Substation.put(substation,"voltage_v",3.0)
-      SCADAMaster.Device.Substation.put(substation,"current_a",1.0)
+      {:ok, val_b} = read_register(ip_substation,@voltage_b_offs)
+      SCADAMaster.Device.Substation.put(substation,"voltage_b",val_b)
+      
+      {:ok, val_c} = read_register(ip_substation,@voltage_c_offs)
+      SCADAMaster.Device.Substation.put(substation,"voltage_c",val_c)
+
+      {:ok, cur_a} = read_register(ip_substation,@current_a_offs)
+      SCADAMaster.Device.Substation.put(substation,"current_a",cur_a)
       SCADAMaster.Device.Substation.put(substation,"current_b",1.0)
       SCADAMaster.Device.Substation.put(substation,"current_c",1.0)
       SCADAMaster.Device.Substation.put(substation,"actpower_a",1.0)
@@ -77,7 +82,7 @@ defmodule SCADAMaster.Device.Collector do
       #Logger.debug "connected. reading... "
       #response = ExModbus.Client.read_data pid, 1, register_offset, 2
       #{:read_holding_registers, values} = Map.get(response, :data)  
-      values = [123,123]            
+      values = [0,0]            
       value = List.first(values)   
       float_val = value / 1           
       {:ok, float_val} 

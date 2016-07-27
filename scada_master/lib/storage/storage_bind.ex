@@ -20,7 +20,7 @@ defmodule SCADAMaster.Storage.StorageBind do
       substation_actpower_a = SCADAMaster.Device.Substation.get(substation,"actpower_a")
       substation_reactpower_a = SCADAMaster.Device.Substation.get(substation,"reactpower_a")
       
-      Logger.debug "Stora device-substations values into DB  "
+      Logger.debug "Store device-substations values into DB  "
       ScadaMaster.Repo.insert!(%SCADAMaster.Storage.Device{devdate: collected_time, 
                                 voltage_a: substation_voltage_a, 
                                 voltage_b: substation_voltage_b, 
