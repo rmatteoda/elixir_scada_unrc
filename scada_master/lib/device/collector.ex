@@ -37,7 +37,7 @@ defmodule SCADAMaster.Device.Collector do
   def handle_cast({:collect, substation}, state) do
     Logger.debug "Collect called from supervisor " 
 
-    case read_modbus(substation) do
+    case load_modbus(substation) do
       {:ok, substation} -> SCADAMaster.Storage.StorageBind.dump_substation(substation)
       {:error, reason} -> Logger.error "Error: #{reason}"
     end
@@ -45,60 +45,67 @@ defmodule SCADAMaster.Device.Collector do
     {:noreply, state}
   end
 
-  defp read_modbus(substation) do
+  defp load_modbus(substation) do
     
     ip_substation = SCADAMaster.Device.Substation.get(substation,"ip")    
     
     try do
-      {:ok, pid} = connect_device(ip_substation)
+      {:ok, pid, status} = connect_device(ip_substation)
       
-      {:ok, val} = read_register(pid,@voltage_a_offs)
-      SCADAMaster.Device.Substation.put(substation,"voltage_a",val)
-      
-      # {:ok, val_b} = read_register(pid,@voltage_b_offs)
-      # SCADAMaster.Device.Substation.put(substation,"voltage_b",val_b)
-      
-      # {:ok, val_c} = read_register(pid,@voltage_c_offs)
-      # SCADAMaster.Device.Substation.put(substation,"voltage_c",val_c)
-
-      # {:ok, cur_a} = read_register(pid,@current_a_offs)
-      # SCADAMaster.Device.Substation.put(substation,"current_a",cur_a)
-      
-      # {:ok, cur_b} = read_register(pid,@current_b_offs)
-      # SCADAMaster.Device.Substation.put(substation,"current_b",cur_b)
-      
-      # {:ok, cur_c} = read_register(pid,@current_c_offs)
-      # SCADAMaster.Device.Substation.put(substation,"current_c",cur_c)
-      
-      # {:ok, pow_ac} = read_register(pid,@actvpower_offs)
-      # SCADAMaster.Device.Substation.put(substation,"actpower_a",pow_ac)
-      
-      # {:ok, pow_reac} = read_register(pid,@reactvpower_offs)
-      # SCADAMaster.Device.Substation.put(substation,"reactpower_a",pow_reac)
+      case status do
+        :on -> 
+          read_modbus(substation, pid)
+          {:ok, substation}
+        :off -> Logger.error "MODBUS Off from: " <> ip_substation
+          {:error, "modbus disconected"}
+      end    
     
-      {:ok, substation}
-
     rescue
       e -> {:error, e}
     end
     
   end
 
-  defp connect_device(ip_substation) do
+defp read_modbus(substation, pid) do
     
-    try do          
-      [ip_a,ip_b,ip_c,ip_d] = String.split(ip_substation,".")
-      Logger.debug "connecting to " <> ip_a <> "." <> ip_b <> "." <> ip_c <> "." <> ip_d 
+    try do
+      {:ok, val} = read_register(pid,@voltage_a_offs)
+      SCADAMaster.Device.Substation.put(substation,"voltage_a",val)
       
-      ExModbus.Client.start_link {192, 168, 12, 33}
-      # case ExModbus.Client.start_link {192, 168, 12, 33} do
-      #  {:ok, pid} -> Logger.debug "ready to read"
-      #  {:error, :timeout} -> Logger.error "Connection timeout Error"
-      # end
+      {:ok, val_b} = read_register(pid,@voltage_b_offs)
+      SCADAMaster.Device.Substation.put(substation,"voltage_b",val_b)
+      
+      {:ok, val_c} = read_register(pid,@voltage_c_offs)
+      SCADAMaster.Device.Substation.put(substation,"voltage_c",val_c)
+
+      {:ok, cur_a} = read_register(pid,@current_a_offs)
+      SCADAMaster.Device.Substation.put(substation,"current_a",cur_a)
+      
+      {:ok, cur_b} = read_register(pid,@current_b_offs)
+      SCADAMaster.Device.Substation.put(substation,"current_b",cur_b)
+      
+      {:ok, cur_c} = read_register(pid,@current_c_offs)
+      SCADAMaster.Device.Substation.put(substation,"current_c",cur_c)
+      
+      {:ok, pow_ac} = read_register(pid,@actvpower_offs)
+      SCADAMaster.Device.Substation.put(substation,"actpower_a",pow_ac)
+      
+      {:ok, pow_reac} = read_register(pid,@reactvpower_offs)
+      SCADAMaster.Device.Substation.put(substation,"reactpower_a",pow_reac)
+    
+      {:ok, substation}
     rescue
-      e -> Logger.error "Connection timeout Error 2:"
       e -> {:error, e}
-    end     
+    end
+  end
+
+  defp connect_device(ip_substation) do
+    [ip_a,ip_b,ip_c,ip_d] = String.split(ip_substation,".")
+    Logger.debug "connecting to " <> ip_a <> "." <> ip_b <> "." <> ip_c <> "." <> ip_d 
+
+    {:ok, pid} = ExModbus.Client.start_link {192, 168, 12, 33}
+    status = ExModbus.Client.status pid
+    {:ok, pid, status}   
   end
 
   defp read_register(pid, register_offset) do        

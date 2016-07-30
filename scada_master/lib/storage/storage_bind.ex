@@ -10,7 +10,7 @@ defmodule SCADAMaster.Storage.StorageBind do
       
       substation_db_id = List.first(found).id
       
-      collected_time =Ecto.DateTime.local
+      collected_time = Ecto.DateTime.utc
       
       substation_voltage_a = SCADAMaster.Device.Substation.get(substation,"voltage_a")
       substation_voltage_b = SCADAMaster.Device.Substation.get(substation,"voltage_b")
