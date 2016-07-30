@@ -69,6 +69,8 @@ defmodule SCADAMaster.Device.Collector do
 defp read_modbus(substation, pid) do
     
     try do
+      Logger.debug "reading modbus register for: " <> substation
+      
       {:ok, val} = read_register(pid,@voltage_a_offs)
       SCADAMaster.Device.Substation.put(substation,"voltage_a",val)
       
@@ -100,17 +102,16 @@ defp read_modbus(substation, pid) do
   end
 
   defp connect_device(ip_substation) do
-    [ip_a,ip_b,ip_c,ip_d] = String.split(ip_substation,".")
-    Logger.debug "connecting to " <> ip_a <> "." <> ip_b <> "." <> ip_c <> "." <> ip_d 
-
-    {:ok, pid} = ExModbus.Client.start_link {192, 168, 12, 33}
+    Logger.debug "connecting to " <> ip_substation
+    {:ok, ip_a, ip_b, ip_c, ip_d} = parseIp(ip_substation)
+    
+    {:ok, pid} = ExModbus.Client.start_link {ip_a, ip_b, ip_c, ip_d}
     status = ExModbus.Client.status pid
     {:ok, pid, status}   
   end
 
   defp read_register(pid, register_offset) do        
     try do      
-      Logger.debug "reading... "
       response = ExModbus.Client.read_data pid, 1, register_offset, 2
       {:read_holding_registers, values} = Map.get(response, :data)  
       
@@ -125,5 +126,12 @@ defp read_modbus(substation, pid) do
     end    
   end
 
-
+  defp parseIp(ip_substation) do
+    [ip_a,ip_b,ip_c,ip_d] = String.split(ip_substation,".")
+    {ip_a_intVal, _} = Integer.parse(ip_a)
+    {ip_b_intVal, _} = Integer.parse(ip_b)
+    {ip_c_intVal, _} = Integer.parse(ip_c)
+    {ip_d_intVal, _} = Integer.parse(ip_d)
+    {:ok, ip_a_intVal, ip_b_intVal, ip_c_intVal, ip_d_intVal}
+  end
 end
