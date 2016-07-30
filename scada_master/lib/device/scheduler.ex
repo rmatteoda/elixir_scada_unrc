@@ -10,7 +10,6 @@ defmodule SCADAMaster.Device.Scheduler do
     Logger.debug "Start System from Scheduler handler " 
     Process.send_after(self(), :work, 15 * 1000) # In 1 minute - ver de agregar tiempo configurado
     SCADAMaster.Device.Loader.start_link       
-    #{:ok, loader}
   end
 
   def handle_info(:work, loader) do

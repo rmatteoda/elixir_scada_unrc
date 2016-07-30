@@ -4,12 +4,13 @@ defmodule SCADAMaster.Storage.StorageBind do
 
   def dump_substation(substation) do    
     try do
+
       substation_name = SCADAMaster.Device.Substation.get(substation,"name")
       found = SCADAMaster.Storage.ScadaQuery.find_substation_by_name(substation_name)  
       
       substation_db_id = List.first(found).id
       
-      collected_time =Ecto.DateTime.utc
+      collected_time =Ecto.DateTime.local
       
       substation_voltage_a = SCADAMaster.Device.Substation.get(substation,"voltage_a")
       substation_voltage_b = SCADAMaster.Device.Substation.get(substation,"voltage_b")
