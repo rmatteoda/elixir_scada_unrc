@@ -18,7 +18,6 @@ defmodule SCADAMaster.Device.Collector do
   Starts the collector.
   """
   def start_link do
-    Logger.debug "Collector started from supervisor " 
     GenServer.start_link(__MODULE__, :ok, [])
   end
 
