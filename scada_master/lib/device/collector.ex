@@ -52,23 +52,21 @@ defmodule SCADAMaster.Device.Collector do
       {:ok, pid, status} = connect_device(ip_substation)
       
       case status do
-        :on -> 
-          read_modbus(substation, pid)
-          {:ok, substation}
+        :on -> read_modbus(substation, pid)
+               {:ok, substation}
         :off -> Logger.error "MODBUS Off from: " <> ip_substation
-          {:error, "modbus disconected"}
-      end    
-    
+                {:error, "modbus disconected"}
+      end         
+        
     rescue
       e -> {:error, e}
     end
     
   end
 
-defp read_modbus(substation, pid) do
-    
+  defp read_modbus(substation, pid) do
     try do
-      Logger.debug "reading modbus register for: " <> substation
+      Logger.debug "reading modbus register "
       
       {:ok, val} = read_register(pid,@voltage_a_offs)
       SCADAMaster.Device.Substation.put(substation,"voltage_a",val)
@@ -115,8 +113,8 @@ defp read_modbus(substation, pid) do
       {:read_holding_registers, values} = Map.get(response, :data)  
       
       #get the float value          
-      value = List.first(values)   
-      float_val = value / 1           
+      value = List.first(values)  
+      float_val = value / 1   
       {:ok, float_val} 
 
     rescue

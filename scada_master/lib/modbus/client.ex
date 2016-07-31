@@ -1,4 +1,4 @@
-defmodule ExModbus.Client do
+defmodule SCADAMaster.Modbus.Client do
   @moduledoc """
   ModbusTCP client to manage communication with a device
   """
