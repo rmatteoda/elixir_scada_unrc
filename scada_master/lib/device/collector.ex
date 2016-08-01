@@ -10,8 +10,8 @@ defmodule SCADAMaster.Device.Collector do
   @current_a_offs       13
   @current_b_offs       15
   @current_c_offs       17
-  @actvpower_offs       25
-  @reactvpower_offs     31
+  @actvpower_offs       65
+  @reactvpower_offs     67
   
   ## Client API
   @doc """
