@@ -104,28 +104,27 @@ defmodule SCADAMaster.Device.Collector do
     
     {:ok, pid} = ExModbus.Client.start_link {ip_a, ip_b, ip_c, ip_d}
     status = ExModbus.Client.status pid
+    #status = :on
+    
     {:ok, pid, status}   
   end
 
   defp read_register(pid, register_offset) do        
     try do      
-      #response = ExModbus.Client.read_data pid, 1, register_offset, 2
-      #{:read_holding_registers, values} = Map.get(response, :data)  
+      response = ExModbus.Client.read_data pid, 1, register_offset, 2
+      {:read_holding_registers, values} = Map.get(response, :data)  
       
       #get the float value 
-      #value1 = List.first(values)  
-      value1 = 17249        
+      #values = [17249,886]
+      value1 = Enum.at(values,0,0)  
       byte1 = value1 |> :binary.encode_unsigned |> Base.encode16
     
-      #value2 = List.first(values)  
-      value2 = 886        
+      value2 = Enum.at(values,1,0) 
       byte2 = value2 |> :binary.encode_unsigned |> Base.encode16
 
       <<float_val::size(32)-float>> = Base.decode16!(byte1 <> byte2)
-      Logger.debug float_val
+      #Logger.debug float_val
          
-      #value = List.first(values)  
-      #float_val = value / 1   
       {:ok, float_val} 
 
     rescue
