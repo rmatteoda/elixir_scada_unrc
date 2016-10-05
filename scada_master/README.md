@@ -4,6 +4,7 @@
 * `mix do deps.get, compile`
 * `mix ecto.create`
 * `mix ecto.migrate`
+* mix ecto.gen.migration add_fields_to_device
 * `mix run priv/repo/seeds.exs`
 * `iex -S mix`
 export PATH=$PATH:/Applications/Postgres.app/Contents/Versions/latest/bin

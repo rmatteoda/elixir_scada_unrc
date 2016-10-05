@@ -10,9 +10,16 @@ defmodule SCADAMaster.Device.Collector do
   @current_a_offs       13
   @current_b_offs       15
   @current_c_offs       17
+  @actvpower_a_offs          25
+  @actvpower_b_offs          27
+  @actvpower_c_offs          29
+  @reactvpower_a_offs        31
+  @reactvpower_b_offs        33
+  @reactvpower_c_offs        35
   @actvpower_offs       65
   @reactvpower_offs     67
-  
+  @unbalance_voltage_offs    71
+  @unbalance_current_offs    73
   ## Client API
   @doc """
   Starts the collector.
@@ -86,12 +93,36 @@ defmodule SCADAMaster.Device.Collector do
       {:ok, cur_c} = read_register(pid,@current_c_offs)
       SCADAMaster.Device.Substation.put(substation,"current_c",cur_c)
       
+      {:ok, acpw_a} = read_register(pid,@actvpower_a_offs)
+      SCADAMaster.Device.Substation.put(substation,"actpower_a",acpw_a)
+
+      {:ok, acpw_b} = read_register(pid,@actvpower_b_offs)
+      SCADAMaster.Device.Substation.put(substation,"actpower_b",acpw_b)
+
+      {:ok, acpw_c} = read_register(pid,@actvpower_c_offs)
+      SCADAMaster.Device.Substation.put(substation,"actpower_c",acpw_c)
+
+      {:ok, reacpw_a} = read_register(pid,@reactvpower_a_offs)
+      SCADAMaster.Device.Substation.put(substation,"reactpower_a",reacpw_a)
+
+      {:ok, reacpw_b} = read_register(pid,@reactvpower_b_offs)
+      SCADAMaster.Device.Substation.put(substation,"reactpower_b",reacpw_b)
+
+      {:ok, reacpw_c} = read_register(pid,@reactvpower_c_offs)
+      SCADAMaster.Device.Substation.put(substation,"reactpower_c",reacpw_c)
+
       {:ok, pow_ac} = read_register(pid,@actvpower_offs)
-      SCADAMaster.Device.Substation.put(substation,"actpower_a",pow_ac)
+      SCADAMaster.Device.Substation.put(substation,"totalactpower",pow_ac)
       
       {:ok, pow_reac} = read_register(pid,@reactvpower_offs)
-      SCADAMaster.Device.Substation.put(substation,"reactpower_a",pow_reac)
+      SCADAMaster.Device.Substation.put(substation,"totalreactpower",pow_reac)
     
+     {:ok, unbalance_v} = read_register(pid,@unbalance_voltage_offs)
+      SCADAMaster.Device.Substation.put(substation,"unbalance_v",unbalance_v)
+
+     {:ok, unbalance_c} = read_register(pid,@unbalance_current_offs)
+      SCADAMaster.Device.Substation.put(substation,"unbalance_c",unbalance_c)
+   
       {:ok, substation}
     rescue
       e -> {:error, e}
@@ -115,7 +146,6 @@ defmodule SCADAMaster.Device.Collector do
       {:read_holding_registers, values} = Map.get(response, :data)  
       
       #get the float value 
-      #values = [17249,886]
       value1 = Enum.at(values,0,0)  
       byte1 = value1 |> :binary.encode_unsigned |> Base.encode16
     
@@ -123,7 +153,6 @@ defmodule SCADAMaster.Device.Collector do
       byte2 = value2 |> :binary.encode_unsigned |> Base.encode16
 
       <<float_val::size(32)-float>> = Base.decode16!(byte1 <> byte2)
-      #Logger.debug float_val
          
       {:ok, float_val} 
 

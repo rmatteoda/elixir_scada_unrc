@@ -8,7 +8,8 @@ defmodule SCADAMaster do
       # Define workers and child supervisors to be supervised
       supervisor(ScadaMaster.Repo, []),
       supervisor(SCADAMaster.Device.Supervisor, []),
-      worker(SCADAMaster.Device.Scheduler, [], restart: :transient)
+      worker(SCADAMaster.Device.Scheduler, [], restart: :transient),
+      worker(SCADAMaster.Storage.Reporter, [], restart: :transient)
     ]
     opts = [strategy: :one_for_one, name: SCADAMaster.Supervisor]
     Supervisor.start_link(children, opts)
