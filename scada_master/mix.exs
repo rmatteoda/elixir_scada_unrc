@@ -29,6 +29,7 @@ defmodule SCADAMaster.Mixfile do
      {:postgrex, ">= 0.0.0"},
      {:ecto, ">= 0.0.0"},
      {:logger_file_backend, ">= 0.0.4"},
-     {:exrm, "~> 1.0.8"}]
+     {:exrm, "~> 1.0.8"},
+     {:csvlixir, "~> 2.0.3"}]
   end
 end
