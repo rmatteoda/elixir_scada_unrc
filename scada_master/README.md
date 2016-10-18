@@ -9,6 +9,8 @@
 * `iex -S mix`
 export PATH=$PATH:/Applications/Postgres.app/Contents/Versions/latest/bin
 
+change datetime alter table public.device alter column devdate type timestamp with time zone;
+
 TODO:
 - Task?
 - Test de funcionamiento de todo y condiciones de falla
