@@ -10,7 +10,7 @@ defmodule SCADAMaster.Storage.Reporter do
   end
 
   def init(state) do
-    Process.send_after(self, :tick, @report_time)
+    do_schedule()
     {:ok, state} 
   end
 
@@ -25,13 +25,17 @@ defmodule SCADAMaster.Storage.Reporter do
     report(dev_table_result)
 
     # Start the timer again
-    Process.send_after(self, :tick, @report_time) 
+    do_schedule()
     {:noreply, state}
   end
 
+  defp do_schedule() do
+    Process.send_after(self(), :tick, @report_time) 
+  end
+  
   def report(dev_table_result) do
     
-    f = File.open!("/Users/rammatte/Workspace/UNRC/SCADA/elixir/scada_project/scada_master/test2.csv", [:write, :utf8])
+    f = File.open!("/Users/rammatte/Workspace/UNRC/SCADA/elixir/scada_project/scada_master/test_date.csv", [:write, :utf8])
     Enum.each(dev_table_result, fn(device) -> 
       IO.write(f, CSVLixir.write_row([device.substation_id,device.voltage_a, device.voltage_b, device.voltage_c,
                                       device.current_a, device.current_b, device.current_c,

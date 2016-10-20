@@ -3,14 +3,16 @@ defmodule SCADAMaster do
 
   def start(_type, _args) do
     import Supervisor.Spec, warn: false
-    # See http://elixir-lang.org/docs/stable/elixir/Supervisor.html
+
+    # Define workers and child supervisors to be supervised
     children = [
-      # Define workers and child supervisors to be supervised
       supervisor(ScadaMaster.Repo, []),
       supervisor(SCADAMaster.Device.Supervisor, []),
+
       worker(SCADAMaster.Device.Scheduler, [], restart: :transient),
       worker(SCADAMaster.Storage.Reporter, [], restart: :transient)
     ]
+    
     opts = [strategy: :one_for_one, name: SCADAMaster.Supervisor]
     Supervisor.start_link(children, opts)
   end

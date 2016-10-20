@@ -133,19 +133,20 @@ defmodule SCADAMaster.Device.Collector do
     Logger.debug "connecting to " <> ip_substation
     {:ok, ip_a, ip_b, ip_c, ip_d} = parseIp(ip_substation)
     
-    {:ok, pid} = ExModbus.Client.start_link {ip_a, ip_b, ip_c, ip_d}
-    status = ExModbus.Client.status pid
-    #status = :on
-    
+    #{:ok, pid} = ExModbus.Client.start_link {ip_a, ip_b, ip_c, ip_d}
+    #status = ExModbus.Client.status pid
+    status = :on
+    pid = 1
     {:ok, pid, status}   
   end
 
   defp read_register(pid, register_offset) do        
     try do      
-      response = ExModbus.Client.read_data pid, 1, register_offset, 2
-      {:read_holding_registers, values} = Map.get(response, :data)  
-      
-      #get the float value 
+      #response = ExModbus.Client.read_data pid, 1, register_offset, 2
+      #{:read_holding_registers, values} = Map.get(response, :data)  
+      #match return value list to values [a, b]
+      #get the float value
+      values = [17249, 886] 
       value1 = Enum.at(values,0,0)  
       byte1 = value1 |> :binary.encode_unsigned |> Base.encode16
     

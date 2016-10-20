@@ -3,24 +3,66 @@ defmodule SCADAMaster.Device.Scheduler do
   require Logger
 
 # configure time in ms to collect data from scada devies.
-  @collect_time 30000
+  @collect_time 1 * 30000 # x minutes (1)
 
+  ## Client API
+  @doc """
+  Starts the scheduler.
+  """
   def start_link do
     GenServer.start_link(__MODULE__, %{})
   end
 
-  def init(loader) do
-    Logger.debug "Start System from Scheduler handler " 
-    Process.send_after(self(), :work, @collect_time) 
-    SCADAMaster.Device.Loader.start_link       
+  @doc """
+  This process will call the collector to get modbus valus every @collect_time configured
+  """
+  def init(state) do
+    Logger.debug "Start Scheduler handler " 
+
+    # Schedule the work
+    do_schedule()
+
+    {:ok, state}      
   end
 
-  def handle_info(:work, loader) do
-    #load substation values
-    SCADAMaster.Device.Loader.load(loader);
+  def handle_info(:work, state) do
+    #load substation values using collector
+    collec()
 
-    # Start the timer again
-    Process.send_after(self(), :work, @collect_time) 
-    {:noreply, loader}
+    # Schadule the work
+    do_schedule()
+
+    {:noreply, state}
   end
+
+  defp do_schedule() do
+    Process.send_after(self(), :work, @collect_time) 
+  end
+
+  @doc """
+  for each substation configured call the collector to load the substation values from modbus device
+  """
+  def collec() do
+    # get the table configured with all substation ips
+    substation_list = Application.get_env(:scada_master,:device_table) #save the device table configured    
+    
+    {:ok, collector_pid} = SCADAMaster.Device.Supervisor.start_collector
+    do_collect_substations collector_pid, substation_list
+  end
+
+  defp do_collect_substations(collector_pid, [subconfig | substation_list]) do
+    {:ok, substation} = SCADAMaster.Device.Substation.start_link    
+    SCADAMaster.Device.Substation.put(substation,"ip",subconfig.ip)
+    SCADAMaster.Device.Substation.put(substation,"name",subconfig.name)
+
+    SCADAMaster.Device.Collector.collect(collector_pid,substation)
+    
+    do_collect_substations collector_pid, substation_list
+  end
+
+  defp do_collect_substations(collector_pid, []) do
+    Logger.debug "Finish Substation collector call " 
+    {:ok, collector_pid}
+  end
+
 end
