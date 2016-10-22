@@ -3,7 +3,7 @@ defmodule SCADAMaster.Device.Collector do
   use GenServer
   require Logger
 
-  # Register Offset Code
+  # Register Offset Codes
   @voltage_a_offs            0x01
   @voltage_b_offs            0x03
   @voltage_c_offs            0x05
@@ -117,7 +117,7 @@ defmodule SCADAMaster.Device.Collector do
 
   defp connect_device(ip_substation) do
     Logger.debug "connecting to " <> ip_substation
-    {:ok, ip_a, ip_b, ip_c, ip_d} = parseIp(ip_substation)
+    #{:ok, ip_a, ip_b, ip_c, ip_d} = parseIp(ip_substation)
     
     #{:ok, pid} = ExModbus.Client.start_link {ip_a, ip_b, ip_c, ip_d}
     #status = ExModbus.Client.status pid
@@ -132,17 +132,14 @@ defmodule SCADAMaster.Device.Collector do
       #{:read_holding_registers, values} = Map.get(response, :data)  
       #match return value list to values [a, b]
       #get the float value
-      values = [17249, 886] 
-      value1 = Enum.at(values,0,0)  
-      byte1 = value1 |> :binary.encode_unsigned |> Base.encode16
-    
-      value2 = Enum.at(values,1,0) 
-      byte2 = value2 |> :binary.encode_unsigned |> Base.encode16
+      [value1, value2] = [17249, 886]
 
-      <<float_val::size(32)-float>> = Base.decode16!(byte1 <> byte2)
+      float_byte1 = value1 |> :binary.encode_unsigned |> Base.encode16    
+      float_byte2 = value2 |> :binary.encode_unsigned |> Base.encode16
+
+      <<float_val::size(32)-float>> = Base.decode16!(float_byte1 <> float_byte2)
          
       {:ok, float_val} 
-
     rescue
       e -> Logger.error "read_register: " <> e
       {:ok, [0.0,0.0]} 

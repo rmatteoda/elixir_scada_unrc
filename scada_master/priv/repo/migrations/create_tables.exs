@@ -13,6 +13,13 @@ defmodule Repo.CreateTables do
       add :current_c, :float
       add :activepower_a, :float
       add :reactivepower_a, :float
+      add :totalactivepower, :float
+      add :activepower_b, :float
+      add :activepower_c, :float
+      add :totalreactivepower, :float
+      add :reactivepower_c, :float
+      add :unbalance_voltage, :float
+      add :unbalance_current, :float
       timestamps
     end
     create index(:device, [:substation_id])

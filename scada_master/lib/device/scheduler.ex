@@ -54,8 +54,6 @@ defmodule SCADAMaster.Device.Scheduler do
     do_collect_substations collector_pid, substation_list
   end
 
-  defp do_collect_substations(collector_pid, []) do
-    {:ok, collector_pid}
-  end
+  defp do_collect_substations(_, []), do: nil
 
 end
