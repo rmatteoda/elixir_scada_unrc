@@ -116,9 +116,11 @@ defmodule SCADAMaster.Device.Collector do
   end
 
   defp connect_device(ip_substation) do
-    Logger.debug "connecting to " <> ip_substation
-    #{:ok, ip_a, ip_b, ip_c, ip_d} = parseIp(ip_substation)
-    
+    Logger.debug "connecting to #{ip_substation}"
+    {:ok, {ip_a, ip_b, ip_c, ip_d}} = ip_substation 
+                                      |> String.to_char_list 
+                                      |> :inet_parse.address
+
     #{:ok, pid} = ExModbus.Client.start_link {ip_a, ip_b, ip_c, ip_d}
     #status = ExModbus.Client.status pid
     status = :on
@@ -146,12 +148,4 @@ defmodule SCADAMaster.Device.Collector do
     end    
   end
 
-  defp parseIp(ip_substation) do
-    [ip_a,ip_b,ip_c,ip_d] = String.split(ip_substation,".")
-    {ip_a_intVal, _} = Integer.parse(ip_a)
-    {ip_b_intVal, _} = Integer.parse(ip_b)
-    {ip_c_intVal, _} = Integer.parse(ip_c)
-    {ip_d_intVal, _} = Integer.parse(ip_d)
-    {:ok, ip_a_intVal, ip_b_intVal, ip_c_intVal, ip_d_intVal}
-  end
 end
