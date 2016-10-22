@@ -18,7 +18,6 @@ defmodule SCADAMaster.Device.Scheduler do
   """
   def init(state) do
     Logger.debug "Start Scheduler handler " 
-
     # Schedule the work
     do_schedule()
 
@@ -51,17 +50,11 @@ defmodule SCADAMaster.Device.Scheduler do
   end
 
   defp do_collect_substations(collector_pid, [subconfig | substation_list]) do
-    {:ok, substation} = SCADAMaster.Device.Substation.start_link    
-    SCADAMaster.Device.Substation.put(substation,"ip",subconfig.ip)
-    SCADAMaster.Device.Substation.put(substation,"name",subconfig.name)
-
-    SCADAMaster.Device.Collector.collect(collector_pid,substation)
-    
+    SCADAMaster.Device.Collector.collect(collector_pid,subconfig.name,subconfig.ip)    
     do_collect_substations collector_pid, substation_list
   end
 
   defp do_collect_substations(collector_pid, []) do
-    Logger.debug "Finish Substation collector call " 
     {:ok, collector_pid}
   end
 

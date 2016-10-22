@@ -23,7 +23,6 @@ defmodule SCADAMaster.Mixfile do
   end
 
   # Dependencies can be Hex packages:
-  #   {:mydep, "~> 0.3.0"}
   defp deps do
     [{:ex_modbus, git: "https://github.com/jwarwick/ex_modbus.git"},
      {:postgrex, ">= 0.0.0"},

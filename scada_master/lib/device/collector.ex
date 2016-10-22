@@ -4,22 +4,23 @@ defmodule SCADAMaster.Device.Collector do
   require Logger
 
   # Register Offset Code
-  @voltage_a_offs       0x01
-  @voltage_b_offs       0x03
-  @voltage_c_offs       0x05
-  @current_a_offs       13
-  @current_b_offs       15
-  @current_c_offs       17
+  @voltage_a_offs            0x01
+  @voltage_b_offs            0x03
+  @voltage_c_offs            0x05
+  @current_a_offs            13
+  @current_b_offs            15
+  @current_c_offs            17
   @actvpower_a_offs          25
   @actvpower_b_offs          27
   @actvpower_c_offs          29
   @reactvpower_a_offs        31
   @reactvpower_b_offs        33
   @reactvpower_c_offs        35
-  @actvpower_offs       65
-  @reactvpower_offs     67
+  @actvpower_offs            65
+  @reactvpower_offs          67
   @unbalance_voltage_offs    71
   @unbalance_current_offs    73
+
   ## Client API
   @doc """
   Starts the collector.
@@ -31,8 +32,8 @@ defmodule SCADAMaster.Device.Collector do
   @doc """
   recorrer la tabla de device y crear por cada key una substation con key, ip .
   """
-  def collect(server,substation) do
-    GenServer.cast(server, {:collect, substation})
+  def collect(server,substation_name, substation_ip) do
+    GenServer.cast(server, {:collect, substation_name, substation_ip})
   end
 
   ## Server Callbacks
@@ -40,28 +41,23 @@ defmodule SCADAMaster.Device.Collector do
       {:noreply, state}
   end
 
-  def handle_cast({:collect, substation}, state) do
-    Logger.debug "Collect called from supervisor " 
-
-    case load_modbus(substation) do
-      {:ok, substation} -> SCADAMaster.Storage.StorageBind.dump_substation(substation)
+  def handle_cast({:collect, substation_name, substation_ip}, state) do
+    case load_modbus(substation_ip) do
+      {:ok, device} -> SCADAMaster.Storage.StorageBind.dump_substation(substation_name,device)
       {:error, reason} -> Logger.error "Error: #{reason}"
     end
 
     {:noreply, state}
   end
 
-  defp load_modbus(substation) do
-    
-    ip_substation = SCADAMaster.Device.Substation.get(substation,"ip")    
+  defp load_modbus(substation_ip) do
     
     try do
-      {:ok, pid, status} = connect_device(ip_substation)
+      {:ok, pid, status} = connect_device(substation_ip)
       
       case status do
-        :on -> read_modbus(substation, pid)
-               {:ok, substation}
-        :off -> Logger.error "MODBUS Off from: " <> ip_substation
+        :on -> read_modbus(pid)
+        :off -> Logger.error "MODBUS Off from: " <> substation_ip
                 {:error, "modbus disconected"}
       end         
         
@@ -71,59 +67,49 @@ defmodule SCADAMaster.Device.Collector do
     
   end
 
-  defp read_modbus(substation, pid) do
+  defp read_modbus(pid) do
     try do
       Logger.debug "reading modbus register "
       
-      {:ok, val} = read_register(pid,@voltage_a_offs)
-      SCADAMaster.Device.Substation.put(substation,"voltage_a",val)
-      
-      {:ok, val_b} = read_register(pid,@voltage_b_offs)
-      SCADAMaster.Device.Substation.put(substation,"voltage_b",val_b)
-      
-      {:ok, val_c} = read_register(pid,@voltage_c_offs)
-      SCADAMaster.Device.Substation.put(substation,"voltage_c",val_c)
-
+      {:ok, vol_a} = read_register(pid,@voltage_a_offs)
+      {:ok, vol_b} = read_register(pid,@voltage_b_offs)
+      {:ok, vol_c} = read_register(pid,@voltage_c_offs)
       {:ok, cur_a} = read_register(pid,@current_a_offs)
-      SCADAMaster.Device.Substation.put(substation,"current_a",cur_a)
-      
       {:ok, cur_b} = read_register(pid,@current_b_offs)
-      SCADAMaster.Device.Substation.put(substation,"current_b",cur_b)
-      
       {:ok, cur_c} = read_register(pid,@current_c_offs)
-      SCADAMaster.Device.Substation.put(substation,"current_c",cur_c)
-      
       {:ok, acpw_a} = read_register(pid,@actvpower_a_offs)
-      SCADAMaster.Device.Substation.put(substation,"actpower_a",acpw_a)
-
       {:ok, acpw_b} = read_register(pid,@actvpower_b_offs)
-      SCADAMaster.Device.Substation.put(substation,"actpower_b",acpw_b)
-
-      {:ok, acpw_c} = read_register(pid,@actvpower_c_offs)
-      SCADAMaster.Device.Substation.put(substation,"actpower_c",acpw_c)
-
+      {:ok, acpw_c} = read_register(pid,@actvpower_c_offs)      
       {:ok, reacpw_a} = read_register(pid,@reactvpower_a_offs)
-      SCADAMaster.Device.Substation.put(substation,"reactpower_a",reacpw_a)
-
       {:ok, reacpw_b} = read_register(pid,@reactvpower_b_offs)
-      SCADAMaster.Device.Substation.put(substation,"reactpower_b",reacpw_b)
-
       {:ok, reacpw_c} = read_register(pid,@reactvpower_c_offs)
-      SCADAMaster.Device.Substation.put(substation,"reactpower_c",reacpw_c)
-
       {:ok, pow_ac} = read_register(pid,@actvpower_offs)
-      SCADAMaster.Device.Substation.put(substation,"totalactpower",pow_ac)
-      
       {:ok, pow_reac} = read_register(pid,@reactvpower_offs)
-      SCADAMaster.Device.Substation.put(substation,"totalreactpower",pow_reac)
-    
-     {:ok, unbalance_v} = read_register(pid,@unbalance_voltage_offs)
-      SCADAMaster.Device.Substation.put(substation,"unbalance_v",unbalance_v)
+      {:ok, unbalance_v} = read_register(pid,@unbalance_voltage_offs)
+      {:ok, unbalance_c} = read_register(pid,@unbalance_current_offs)
+      
+      collected_time = Ecto.DateTime.utc
+      
+      device = %SCADAMaster.Storage.Device{devdate: collected_time, 
+                                voltage_a: vol_a, 
+                                voltage_b: vol_b, 
+                                voltage_c: vol_c, 
+                                current_a: cur_a,
+                                current_b: cur_b,
+                                current_c: cur_c,
+                                activepower_a: acpw_a,
+                                activepower_b: acpw_b,
+                                activepower_c: acpw_c,
+                                reactivepower_a: reacpw_a,
+                                reactivepower_b: reacpw_b,
+                                reactivepower_c: reacpw_c,
+                                totalactivepower: pow_ac,
+                                totalreactivepower: pow_reac,
+                                unbalance_voltage: unbalance_v,
+                                unbalance_current: unbalance_c,
+                                substation_id: 1}
 
-     {:ok, unbalance_c} = read_register(pid,@unbalance_current_offs)
-      SCADAMaster.Device.Substation.put(substation,"unbalance_c",unbalance_c)
-   
-      {:ok, substation}
+      {:ok, device}
     rescue
       e -> {:error, e}
     end

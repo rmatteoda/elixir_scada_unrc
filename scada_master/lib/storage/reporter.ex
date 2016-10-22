@@ -3,7 +3,7 @@ defmodule SCADAMaster.Storage.Reporter do
   require Logger
 
 # configure time in ms to collect data from scada devies.
-  @report_time 1 * 60000 #  (60 minutos)
+  @report_time 10 * 60000 #  (60 minutos)
 
   def start_link do
     GenServer.start_link(__MODULE__, %{})
