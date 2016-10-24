@@ -10,11 +10,18 @@ defmodule Seeds do
 
   # Import substations
   defp import_substations([subconfig | substation_list]) do
-    ScadaMaster.Repo.insert!(%SCADAMaster.Storage.Substation{name: subconfig.name}, log: false)
+    case ScadaMaster.Repo.get_by(SCADAMaster.Storage.Substation, name: subconfig.name) do
+          %{id: id} -> id
+          nil -> insert(subconfig)
+    end
     import_substations substation_list
   end
 
   defp import_substations([]), do: nil
+
+  defp insert(subconfig) do
+    ScadaMaster.Repo.insert!(%SCADAMaster.Storage.Substation{name: subconfig.name}, log: false)
+  end
 
 end
 

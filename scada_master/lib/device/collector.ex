@@ -53,7 +53,7 @@ defmodule SCADAMaster.Device.Collector do
   defp load_modbus(substation_ip) do
     
     try do
-      {:ok, pid, status} = connect_device(substation_ip)
+      {:ok, pid, status} = do_connect(substation_ip)
       
       case status do
         :on -> read_modbus(pid)
@@ -115,7 +115,7 @@ defmodule SCADAMaster.Device.Collector do
     end
   end
 
-  defp connect_device(ip_substation) do
+  defp do_connect(ip_substation) do
     Logger.debug "connecting to #{ip_substation}"
     {:ok, {ip_a, ip_b, ip_c, ip_d}} = ip_substation 
                                       |> String.to_char_list 
