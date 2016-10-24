@@ -42,7 +42,7 @@ defmodule SCADAMaster.Device.Collector do
   end
 
   def handle_cast({:collect, substation_name, substation_ip}, state) do
-    case load_modbus(substation_ip) do
+    case load_modbus(substation_ip,substation_name) do
       {:ok, device} -> SCADAMaster.Storage.StorageBind.dump_substation(substation_name,device)
       {:error, reason} -> Logger.error "Error: #{reason}"
     end
@@ -50,13 +50,13 @@ defmodule SCADAMaster.Device.Collector do
     {:noreply, state}
   end
 
-  defp load_modbus(substation_ip) do
+  defp load_modbus(substation_ip,substation_name) do
     
     try do
       {:ok, pid, status} = do_connect(substation_ip)
       
       case status do
-        :on -> read_modbus(pid)
+        :on -> read_modbus(pid,substation_name)
         :off -> Logger.error "MODBUS Off from: " <> substation_ip
                 {:error, "modbus disconected"}
       end         
@@ -67,7 +67,7 @@ defmodule SCADAMaster.Device.Collector do
     
   end
 
-  defp read_modbus(pid) do
+  defp read_modbus(pid,substation_name) do
     try do
       Logger.debug "reading modbus register "
       
@@ -89,7 +89,8 @@ defmodule SCADAMaster.Device.Collector do
       {:ok, unbalance_c} = read_register(pid,@unbalance_current_offs)
       
       collected_time = Ecto.DateTime.utc
-      
+      sub_id = SCADAMaster.Storage.ScadaQuery.find_substation_id_by_name(substation_name)  
+
       device = %SCADAMaster.Storage.Device{devdate: collected_time, 
                                 voltage_a: vol_a, 
                                 voltage_b: vol_b, 
@@ -107,7 +108,7 @@ defmodule SCADAMaster.Device.Collector do
                                 totalreactivepower: pow_reac,
                                 unbalance_voltage: unbalance_v,
                                 unbalance_current: unbalance_c,
-                                substation_id: 1}
+                                substation_id: sub_id}
 
       {:ok, device}
     rescue
