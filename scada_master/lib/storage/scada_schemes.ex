@@ -30,10 +30,5 @@ defmodule SCADAMaster.Storage.Device do
     field :unbalance_current, :float, default: 0.0
     timestamps
   end
-
-  # def changeset(device, params \\ %{}) do
-  #   device
-  #   |> Ecto.Changeset.cast(params, ~w(devdate voltage_a age))
-  #   |> Ecto.Changeset.validate_required([:devdate, :voltage_a])
-  # end
+  @required_fields ~w(devdate)
 end

@@ -40,9 +40,9 @@ defmodule SCADAMaster.Storage.Reporter do
 
   defp do_report([subconfig | substation_list]) do
 
-    case SCADAMaster.Storage.ScadaQuery.find_substation_id_by_name(subconfig.name) do 
+    case SCADAMaster.Storage.StorageBind.find_substation_id_by_name(subconfig.name) do 
       nil -> Logger.error "Substation not found in DB to generate report"
-      sub_id -> dev_table_result = SCADAMaster.Storage.ScadaQuery.find_collecteddata_by_subid(sub_id)
+      sub_id -> dev_table_result = SCADAMaster.Storage.StorageBind.find_collecteddata_by_subid(sub_id)
                 do_report_table(dev_table_result,subconfig.name)
     end
 

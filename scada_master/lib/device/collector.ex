@@ -43,7 +43,7 @@ defmodule SCADAMaster.Device.Collector do
 
   def handle_cast({:collect, substation_name, substation_ip}, state) do
     case load_modbus(substation_ip,substation_name) do
-      {:ok, device} -> SCADAMaster.Storage.StorageBind.dump_substation(substation_name,device)
+      {:ok, device} -> SCADAMaster.Storage.StorageBind.storage_collected_data(device)
       {:error, reason} -> Logger.error "Error: #{reason}"
     end
 
@@ -89,9 +89,10 @@ defmodule SCADAMaster.Device.Collector do
       {:ok, unbalance_c} = read_register(pid,@unbalance_current_offs)
       
       collected_time = Ecto.DateTime.utc
-      sub_id = SCADAMaster.Storage.ScadaQuery.find_substation_id_by_name(substation_name)  
 
-      device = %SCADAMaster.Storage.Device{devdate: collected_time, 
+      case SCADAMaster.Storage.StorageBind.find_substation_id_by_name(substation_name) do 
+        nil -> {:error, "Substation not found in DB to save collected data"}
+        sub_id -> device = %SCADAMaster.Storage.Device{devdate: collected_time, 
                                 voltage_a: vol_a, 
                                 voltage_b: vol_b, 
                                 voltage_c: vol_c, 
@@ -109,8 +110,9 @@ defmodule SCADAMaster.Device.Collector do
                                 unbalance_voltage: unbalance_v,
                                 unbalance_current: unbalance_c,
                                 substation_id: sub_id}
-
-      {:ok, device}
+                   {:ok, device}
+      end
+      
     rescue
       e -> {:error, e}
     end
