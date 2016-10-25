@@ -19,7 +19,7 @@ defmodule SCADAMaster.Mixfile do
   defp aliases do
     ["ecto.setup": ["ecto.create", "ecto.migrate", "run priv/repo/seeds.exs"],
      "ecto.reset": ["ecto.drop", "ecto.setup"],
-     "test":       ["ecto.reset", "test"]]
+     "ecto.test":  ["ecto.reset", "test"]]
   end
 
   # Dependencies can be Hex packages:
