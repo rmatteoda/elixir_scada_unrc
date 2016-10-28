@@ -12,6 +12,9 @@
 
 export PATH=$PATH:/Applications/Postgres.app/Contents/Versions/latest/bin
 
+Call wheather api Rio Cuarto
+http://api.openweathermap.org/data/2.5/weather?q=Rio%20Cuarto&appid=9f93848b56f03956ac309647a7132103
+
 TODO:
 - Test de funcionamiento de todo y condiciones de falla
 

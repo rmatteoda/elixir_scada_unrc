@@ -1,4 +1,4 @@
-defmodule SCADAMaster.Device.Collector do
+defmodule SCADAMaster.Device.CollectorOld do
 
   use GenServer
   require Logger
@@ -7,6 +7,19 @@ defmodule SCADAMaster.Device.Collector do
   @voltage_a_offs            0x01
   @voltage_b_offs            0x03
   @voltage_c_offs            0x05
+  @current_a_offs            13
+  @current_b_offs            15
+  @current_c_offs            17
+  @actvpower_a_offs          25
+  @actvpower_b_offs          27
+  @actvpower_c_offs          29
+  @reactvpower_a_offs        31
+  @reactvpower_b_offs        33
+  @reactvpower_c_offs        35
+  @actvpower_offs            65
+  @reactvpower_offs          67
+  @unbalance_voltage_offs    71
+  @unbalance_current_offs    73
 
   ## Client API
   @doc """
@@ -58,37 +71,50 @@ defmodule SCADAMaster.Device.Collector do
     try do
       Logger.debug "reading modbus register "
       
-      volt_cfg = [%{offset: 1, name: "voltage_a"},%{offset: 3, name: "voltage_b"},%{offset: 5, name: "voltage_c"}]
-    
-            
+      volt_cfg = %{offset: 2, name: "voltage_a"}
+
       {:ok, vol_a} = read_register(pid,@voltage_a_offs)
+      {:ok, vol_b} = read_register(pid,@voltage_b_offs)
+      {:ok, vol_c} = read_register(pid,@voltage_c_offs)
+      {:ok, cur_a} = read_register(pid,@current_a_offs)
+      {:ok, cur_b} = read_register(pid,@current_b_offs)
+      {:ok, cur_c} = read_register(pid,@current_c_offs)
+      {:ok, acpw_a} = read_register(pid,@actvpower_a_offs)
+      {:ok, acpw_b} = read_register(pid,@actvpower_b_offs)
+      {:ok, acpw_c} = read_register(pid,@actvpower_c_offs)      
+      {:ok, reacpw_a} = read_register(pid,@reactvpower_a_offs)
+      {:ok, reacpw_b} = read_register(pid,@reactvpower_b_offs)
+      {:ok, reacpw_c} = read_register(pid,@reactvpower_c_offs)
+      {:ok, pow_ac} = read_register(pid,@actvpower_offs)
+      {:ok, pow_reac} = read_register(pid,@reactvpower_offs)
+      {:ok, unbalance_v} = read_register(pid,@unbalance_voltage_offs)
+      {:ok, unbalance_c} = read_register(pid,@unbalance_current_offs)
       
       collected_time = Ecto.DateTime.utc
-      device = %SCADAMaster.Storage.Device{devdate: collected_time}
 
-      #case SCADAMaster.Storage.StorageBind.find_substation_id_by_name(substation_name) do 
-      #   nil -> {:error, "Substation not found in DB to save collected data"}
-      #   sub_id -> device = %SCADAMaster.Storage.Device{devdate: collected_time, 
-      #                           voltage_a: vol_a, 
-      #                           voltage_b: vol_b, 
-      #                           voltage_c: vol_c, 
-      #                           current_a: cur_a,
-      #                           current_b: cur_b,
-      #                           current_c: cur_c,
-      #                           activepower_a: acpw_a,
-      #                           activepower_b: acpw_b,
-      #                           activepower_c: acpw_c,
-      #                           reactivepower_a: reacpw_a,
-      #                           reactivepower_b: reacpw_b,
-      #                           reactivepower_c: reacpw_c,
-      #                           totalactivepower: pow_ac,
-      #                           totalreactivepower: pow_reac,
-      #                           unbalance_voltage: unbalance_v,
-      #                           unbalance_current: unbalance_c,
-      #                           substation_id: sub_id}
-      #              {:ok, device}
-      # end
-      {:ok, device}
+      case SCADAMaster.Storage.StorageBind.find_substation_id_by_name(substation_name) do 
+        nil -> {:error, "Substation not found in DB to save collected data"}
+        sub_id -> device = %SCADAMaster.Storage.Device{devdate: collected_time, 
+                                voltage_a: vol_a, 
+                                voltage_b: vol_b, 
+                                voltage_c: vol_c, 
+                                current_a: cur_a,
+                                current_b: cur_b,
+                                current_c: cur_c,
+                                activepower_a: acpw_a,
+                                activepower_b: acpw_b,
+                                activepower_c: acpw_c,
+                                reactivepower_a: reacpw_a,
+                                reactivepower_b: reacpw_b,
+                                reactivepower_c: reacpw_c,
+                                totalactivepower: pow_ac,
+                                totalreactivepower: pow_reac,
+                                unbalance_voltage: unbalance_v,
+                                unbalance_current: unbalance_c,
+                                substation_id: sub_id}
+                   {:ok, device}
+      end
+      
     rescue
       e -> {:error, e}
     end
@@ -141,20 +167,14 @@ defmodule SCADAMaster.Device.Collector do
 #https://github.com/appcues/exconstructor
 
 #suggestion by Jose Valim:
-  def to_struct(kind, attrs) do
-      struct = struct(kind)
-      Enum.reduce Map.to_list(struct), struct, fn {k, _}, acc ->
-        case Map.fetch(attrs, Atom.to_string(k)) do
-          {:ok, v} -> %{acc | k => v}
-          :error -> acc
-        end
-      end
-  end
+  # def to_struct(kind, attrs) do
+  #     struct = struct(kind)
+  #     Enum.reduce Map.to_list(struct), struct, fn {k, _}, acc ->
+  #       case Map.fetch(attrs, Atom.to_string(k)) do
+  #         {:ok, v} -> %{acc | k => v}
+  #         :error -> acc
+  #       end
+  #     end
+  # end
 
 end
-
-defmodule SubstationData do
-  defstruct [:voltage_a, :voltage_b, :voltage_c]
-    
-end
-
