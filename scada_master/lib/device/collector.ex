@@ -24,40 +24,39 @@ defmodule SCADAMaster.Device.Collector do
   end
 
   def handle_cast({:collect, substation_name, substation_ip}, state) do
-    case load_modbus(substation_ip,substation_name) do
-      {:ok, device} -> SCADAMaster.Storage.StorageBind.storage_collected_data(device)
+    case do_read_registers(substation_ip,substation_name) do
+      {:ok, substation_values} -> SCADAMaster.Storage.StorageBind.storage_collected_data(substation_values)
       {:error, reason} -> Logger.error "Error: #{reason}"
     end
 
     {:noreply, state}
   end
 
-  defp load_modbus(substation_ip,substation_name) do
-    
+  defp do_read_registers(substation_ip,substation_name) do    
     try do
       {:ok, pid, status} = do_connect(substation_ip)
       
       case status do
-        :on -> read_modbus(pid,substation_name)
+        :on -> do_read_modbus(pid,substation_name)
         :off -> Logger.error "MODBUS Off from: " <> substation_ip
                 {:error, "modbus disconected"}
       end         
-        
     rescue
       e -> {:error, e}
     end
     
   end
 
-  defp read_modbus(pid,substation_name) do
+  defp do_read_modbus(pid,substation_name) do
     try do
       Logger.debug "reading modbus register "      
+      
       register_map = Map.from_struct(SCADAMaster.Device.SubstationStruct)
       substationdata = Map.new(register_map, fn {key, val} -> 
-                                        {:ok, val} = read_register(pid,val)
-                                        {key, val} 
-                                     end)
-      
+                                               {:ok, val} = do_read_register(pid,val)
+                                               {key, val} 
+                                             end)
+     
       case SCADAMaster.Storage.StorageBind.find_substation_id_by_name(substation_name) do 
           nil -> {:error, "Substation not found in DB to save collected data"}
           sub_id -> substation_values = Map.put(substationdata, :substation_id, sub_id)
@@ -69,7 +68,7 @@ defmodule SCADAMaster.Device.Collector do
     end
   end
 
-  defp read_register(pid, register_offset) do        
+  defp do_read_register(pid, register_offset) do        
     try do      
       #response = ExModbus.Client.read_data pid, 1, register_offset, 2
       #{:read_holding_registers, values} = Map.get(response, :data)  

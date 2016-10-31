@@ -28,9 +28,9 @@ defmodule SCADAMaster.Storage.StorageBind do
   @doc """
   Save collected data from substation into device table
   """
-  def storage_collected_data(device_acc) do    
+  def storage_collected_data(substation_values) do    
     try do
-      changeset = SCADAMaster.Storage.Device.changeset(%SCADAMaster.Storage.Device{}, device_acc)
+      changeset = SCADAMaster.Storage.Device.changeset(%SCADAMaster.Storage.Device{}, substation_values)
       
       if changeset.valid? do
         Logger.debug "Store device-substations values into DB  "
