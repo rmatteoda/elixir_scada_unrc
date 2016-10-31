@@ -9,9 +9,10 @@ end
 
 defmodule SCADAMaster.Storage.Device do
   use Ecto.Schema
+  import Ecto.Changeset
+
   schema "device" do
     belongs_to :substation, SCADAMaster.Storage.Substation
-    field :devdate, Ecto.DateTime, default: Ecto.DateTime.utc
     field :voltage_a, :float, default: 0.0
     field :voltage_b, :float, default: 0.0
     field :voltage_c, :float, default: 0.0
@@ -30,5 +31,13 @@ defmodule SCADAMaster.Storage.Device do
     field :unbalance_current, :float, default: 0.0
     timestamps
   end
-  @required_fields ~w(devdate)
+
+  @required_fields ~w(voltage_a voltage_b voltage_c current_a current_b current_c substation_id)
+  @optional_fields ~w(activepower_a activepower_b activepower_c reactivepower_a reactivepower_b reactivepower_c totalactivepower totalreactivepower unbalance_voltage unbalance_current)
+
+  def changeset(device, params \\ :empty) do
+    device
+    |> cast(params, @required_fields, @optional_fields)
+  end
+
 end

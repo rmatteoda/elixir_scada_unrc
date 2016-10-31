@@ -19,7 +19,7 @@ defmodule SCADAMaster.Storage.StorageBind do
   def find_collecteddata_by_subid(substation_id) do
     query = from dev in SCADAMaster.Storage.Device,
         where: dev.substation_id == ^substation_id,
-        order_by: [asc: :devdate],
+        order_by: [asc: :updated_at],
         select: dev
 
     ScadaMaster.Repo.all(query, log: false)
@@ -28,10 +28,15 @@ defmodule SCADAMaster.Storage.StorageBind do
   @doc """
   Save collected data from substation into device table
   """
-  def storage_collected_data(device) do    
+  def storage_collected_data(device_acc) do    
     try do
-      Logger.debug "Store device-substations values into DB  "
-      ScadaMaster.Repo.insert!(device, log: false)
+      changeset = SCADAMaster.Storage.Device.changeset(%SCADAMaster.Storage.Device{}, device_acc)
+      
+      if changeset.valid? do
+        Logger.debug "Store device-substations values into DB  "
+        ScadaMaster.Repo.insert!(changeset, log: false)
+      end
+
     rescue
       Ecto.QueryError -> Logger.error "dump_substation: find_substation_by_name Ecto.QueryError "
       DBConnection.ConnectionError -> Logger.error "dump_substation: find_substation_by_name DBConnection.ConnectionError "
