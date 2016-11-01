@@ -5,4 +5,3 @@
 /rel
 erl_crash.dump
 *.ez
-/priv/repo/migrations/
