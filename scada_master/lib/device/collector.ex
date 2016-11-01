@@ -12,7 +12,7 @@ defmodule SCADAMaster.Device.Collector do
   end
 
   @doc """
-  recorrer la tabla de device y crear por cada key una substation con key, ip .
+  Connect to substation using modbus and read all register of senpron device
   """
   def collect(server,substation_name, substation_ip) do
     GenServer.cast(server, {:collect, substation_name, substation_ip})
@@ -32,6 +32,9 @@ defmodule SCADAMaster.Device.Collector do
     {:noreply, state}
   end
 
+  @doc """
+  Read sempron register using ex_modbus library
+  """
   defp do_read_registers(substation_ip,substation_name) do    
     try do
       {:ok, pid, status} = do_connect(substation_ip)
@@ -47,6 +50,10 @@ defmodule SCADAMaster.Device.Collector do
     
   end
 
+  @doc """
+  buid register map from struc for substation with all offsets and register key defined
+  iterate over map to read all registers
+  """
   defp do_read_modbus(pid,substation_name) do
     try do
       Logger.debug "reading modbus register "      
@@ -68,6 +75,9 @@ defmodule SCADAMaster.Device.Collector do
     end
   end
 
+  @doc """
+  Read modbus register using the pid of the connection, register offset
+  """
   defp do_read_register(pid, register_offset) do        
     try do      
       #response = ExModbus.Client.read_data pid, 1, register_offset, 2
@@ -85,6 +95,10 @@ defmodule SCADAMaster.Device.Collector do
     end    
   end
 
+  @doc """
+  Connecto to modbus device 
+  return pid and status of connection
+  """
   defp do_connect(ip_substation) do
     Logger.debug "connecting to #{ip_substation}"
     {:ok, {ip_a, ip_b, ip_c, ip_d}} = ip_substation 

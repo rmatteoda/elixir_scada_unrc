@@ -1,6 +1,6 @@
 defmodule SCADAMaster.Device.SubstationStruct do
 @doc """
-Define struct for senpron with register keys and offset to read using modbas
+Define struct for senpron with register keys and offset to read using modbus
 """
   defstruct voltage_a: 1,
             voltage_b: 3,

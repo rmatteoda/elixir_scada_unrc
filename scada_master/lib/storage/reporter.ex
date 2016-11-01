@@ -4,6 +4,7 @@ defmodule SCADAMaster.Storage.Reporter do
 
 # configure time in ms to collect data from scada devies.
   @report_time 60 * 60000 #  (60 minutos)
+  #path to save the report csv file
   @report_path "/Users/rammatte/Workspace/UNRC/SCADA/elixir/scada_project/scada_master/"
 
   def start_link do
@@ -51,6 +52,10 @@ defmodule SCADAMaster.Storage.Reporter do
 
   defp do_report([]), do: nil
 
+  @doc """
+  made a query to db and get all values of substation
+  dump values into csv file report
+  """
   defp do_report_table(dev_table_result, substation_name) do
     file_name = Path.join(@report_path, substation_name <> "_data.csv")
     f = File.open!(file_name, [:write, :utf8])

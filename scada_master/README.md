@@ -17,7 +17,8 @@ http://api.openweathermap.org/data/2.5/weather?q=Rio%20Cuarto&appid=9f93848b56f0
 
 TODO:
 - Hacer Test cases 
-- Agregar documentacion
+- Documentar codigo
+- Agregar llamada para cargar datos climaticos de Rio Cuarto
 
 ## Installation
 
