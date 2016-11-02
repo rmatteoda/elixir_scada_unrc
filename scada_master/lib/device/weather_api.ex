@@ -9,7 +9,6 @@ require Logger
   Call api to get weather info of Rio Cuarto using http://openweathermap.org
   """
   def collect_weather do
-    IO.puts "call weather api"
     case HTTPoison.get(@weather_uri) do
         {:ok, %HTTPoison.Response{status_code: 200, body: body}} ->
           do_process_response body
@@ -33,7 +32,6 @@ require Logger
                                                {:ok, val} = convert(String.to_atom(key),val)
                                                {key, val} 
                                              end)
-    IO.inspect weather_main
     SCADAMaster.Storage.StorageBind.storage_collected_weather(weather_main)
   end
   
@@ -50,13 +48,6 @@ require Logger
   end
 
   defp do_convert(_, v) do
-    {:ok, v}
+    {:ok, v }
   end
-
 end
-# tipical response JSON:
-# %{"main" => %{"humidity" => 29, "pressure" => 1020, "temp" => 289.15,
-#     "temp_max" => 289.15, "temp_min" => 289.15},
-#   "weather" => [%{"description" => "clear sky", "icon" => "01d", "id" => 800,
-#      "main" => "Clear"}], "wind" => %{"deg" => 200, "speed" => 7.7}}
-

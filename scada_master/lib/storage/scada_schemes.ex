@@ -46,7 +46,7 @@ defmodule SCADAMaster.Storage.Weather do
   import Ecto.Changeset
 
   schema "weather" do
-    field :temperature, :float
+    field :temp, :float
     field :humidity, :float
     field :pressure, :float
     field :wind_speed, :float
@@ -54,7 +54,7 @@ defmodule SCADAMaster.Storage.Weather do
     timestamps
   end
 
-  @required_fields ~w(humidity pressure temperature)
+  @required_fields ~w(humidity pressure temp)
   @optional_fields ~w(cloudiness wind_speed)
 
   def changeset(weather, params \\ :empty) do

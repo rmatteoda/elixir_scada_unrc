@@ -35,6 +35,8 @@ defmodule SCADAMaster.Storage.StorageBind do
       if changeset.valid? do
         Logger.debug "Store device-substations values into DB  "
         ScadaMaster.Repo.insert!(changeset, log: false)
+      else
+        Logger.error "storage_collected_data: error in changset "      
       end
 
     rescue
@@ -48,11 +50,12 @@ defmodule SCADAMaster.Storage.StorageBind do
   """
   def storage_collected_weather(weather_values) do    
     try do
-      changeset = SCADAMaster.Storage.Weather.changeset(%SCADAMaster.Storage.Weather{}, weather_values)
-      
+      changeset = SCADAMaster.Storage.Weather.changeset(%SCADAMaster.Storage.Weather{}, weather_values)   
       if changeset.valid? do
-        Logger.debug "Store weather values into DB  "
+        Logger.debug "Store weather values into DB "
         ScadaMaster.Repo.insert!(changeset, log: false)
+      else
+        Logger.error "storage_collected_weather: error in changset "      
       end
 
     rescue

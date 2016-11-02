@@ -29,7 +29,7 @@ defmodule Repo.CreateTables do
     end
 
     create table(:weather) do
-      add :temperature, :float
+      add :temp, :float
       add :humidity,   :float
       add :pressure,   :float
       add :wind_speed, :float

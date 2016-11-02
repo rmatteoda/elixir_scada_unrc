@@ -25,7 +25,7 @@ defmodule SCADAMaster.Device.Scheduler do
   end
 
   def handle_info(:work, state) do
-    #load substation values using collector
+    #load substation values using collector adn weather data from openweather api
     collec()
     SCADAMaster.Device.WeatherApi.collect_weather
     # Schadule the work
