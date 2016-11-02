@@ -39,5 +39,27 @@ defmodule SCADAMaster.Storage.Device do
     device
     |> cast(params, @required_fields, @optional_fields)
   end
+end
+
+defmodule SCADAMaster.Storage.Weather do
+  use Ecto.Schema
+  import Ecto.Changeset
+
+  schema "weather" do
+    field :temperature, :float
+    field :humidity, :float
+    field :pressure, :float
+    field :wind_speed, :float
+    field :cloudiness, :string
+    timestamps
+  end
+
+  @required_fields ~w(humidity pressure temperature)
+  @optional_fields ~w(cloudiness wind_speed)
+
+  def changeset(weather, params \\ :empty) do
+    weather
+    |> cast(params, @required_fields, @optional_fields)
+  end
 
 end

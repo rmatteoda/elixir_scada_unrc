@@ -38,9 +38,26 @@ defmodule SCADAMaster.Storage.StorageBind do
       end
 
     rescue
-      Ecto.QueryError -> Logger.error "dump_substation: find_substation_by_name Ecto.QueryError "
-      DBConnection.ConnectionError -> Logger.error "dump_substation: find_substation_by_name DBConnection.ConnectionError "
-      UndefinedFunctionError -> Logger.error "dump_substation: UndefinedFunctionError "
+      DBConnection.ConnectionError -> Logger.error "storage_collected_data: DBConnection.ConnectionError "
+      UndefinedFunctionError -> Logger.error "storage_collected_data: UndefinedFunctionError "
+    end
+  end
+
+  @doc """
+  Save collected data from weather api http://openweathermap.org
+  """
+  def storage_collected_weather(weather_values) do    
+    try do
+      changeset = SCADAMaster.Storage.Weather.changeset(%SCADAMaster.Storage.Weather{}, weather_values)
+      
+      if changeset.valid? do
+        Logger.debug "Store weather values into DB  "
+        ScadaMaster.Repo.insert!(changeset, log: false)
+      end
+
+    rescue
+      DBConnection.ConnectionError -> Logger.error "storage_collected_weather: find_substation_by_name DBConnection.ConnectionError "
+      UndefinedFunctionError -> Logger.error "storage_collected_weather: UndefinedFunctionError "
     end
   end
 

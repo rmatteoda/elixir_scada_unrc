@@ -28,6 +28,15 @@ defmodule Repo.CreateTables do
       add :name, :string, size: 40, null: false, unique: true
     end
 
+    create table(:weather) do
+      add :temperature, :float
+      add :humidity,   :float
+      add :pressure,   :float
+      add :wind_speed, :float
+      add :cloudiness, :string
+      timestamps
+    end
+
     create unique_index(:substations, [:name], name: :unique_names)
   end
 

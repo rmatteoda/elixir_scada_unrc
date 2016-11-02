@@ -3,11 +3,13 @@ defmodule SCADAMaster.Device.WeatherApi do
 require Logger
 
 @weather_uri "http://api.openweathermap.org/data/2.5/weather?q=Rio%20Cuarto&appid=9f93848b56f03956ac309647a7132103"
+@expected_fields ~w(weather wind main )
 
   @doc """
-  Call api to get weather info of Rio Cuarto using http://api.openweathermap.org
+  Call api to get weather info of Rio Cuarto using http://openweathermap.org
   """
   def collect_weather do
+    IO.puts "call weather api"
     case HTTPoison.get(@weather_uri) do
         {:ok, %HTTPoison.Response{status_code: 200, body: body}} ->
           do_process_response body
@@ -18,20 +20,43 @@ require Logger
     end
   end
 
-  defp do_process_response(weather_json_body) do 
-    IO.puts weather_json_body
-    weather_json_body
-    |> Poison.decode!
-    |> Map.take(@expected_fields)
-    |> Enum.map(fn({k, v}) -> {String.to_atom(k), v} end)
+  defp do_process_response(weather_json_response) do 
+    weather_map = weather_json_response 
+                  |> Poison.Parser.parse! 
+                  |> Map.take(@expected_fields)                  
     
+    do_save_weather(weather_map)
+  end
+
+  defp do_save_weather(weather_map) do 
+    weather_main = Map.new(weather_map["main"], fn {key, val} -> 
+                                               {:ok, val} = convert(String.to_atom(key),val)
+                                               {key, val} 
+                                             end)
+    IO.inspect weather_main
+    SCADAMaster.Storage.StorageBind.storage_collected_weather(weather_main)
+  end
+  
+  @doc """
+  Convert weather values from api to local standars (i.e: convert :temp from kelvin to celcius)
+  """
+  def convert(k, v) do
+    do_convert(k,v)
+  end
+
+  defp do_convert(:temp, kelvin_v) do
+    celcius_v = kelvin_v - 273.15
+    {:ok, celcius_v}
+  end
+
+  defp do_convert(_, v) do
+    {:ok, v}
   end
 
 end
-
-# {"coord":{"lon":-64.35,"lat":-33.13},"weather":[{"id":800,"main":"Clear","description":"clear sky","icon":"01d"}],
-# "base":"stations","main":{"temp":290.15,"pressure":1012,"humidity":29,"temp_min":290.15,"temp_max":290.15},
-# "visibility":10000,"wind":{"speed":13.9,"deg":180,"gust":20.6},"clouds":{"all":0},"dt":1478030400,"sys":
-# {"type":1,"id":4715,"message":0.0024,"country":"AR","sunrise":1477991805,"sunset":1478040335},"id":3838874,
-# "name":"Rio Cuarto","cod":200}
+# tipical response JSON:
+# %{"main" => %{"humidity" => 29, "pressure" => 1020, "temp" => 289.15,
+#     "temp_max" => 289.15, "temp_min" => 289.15},
+#   "weather" => [%{"description" => "clear sky", "icon" => "01d", "id" => 800,
+#      "main" => "Clear"}], "wind" => %{"deg" => 200, "speed" => 7.7}}
 

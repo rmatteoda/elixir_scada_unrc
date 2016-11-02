@@ -3,7 +3,7 @@ defmodule SCADAMaster.Device.Scheduler do
   require Logger
 
 # configure time in ms to collect data from scada devies.
-  @collect_time 1 * 10000 # x minutes (1)
+  @collect_time 1 * 30000 # x minutes (1)
 
   ## Client API
   @doc """
@@ -27,7 +27,7 @@ defmodule SCADAMaster.Device.Scheduler do
   def handle_info(:work, state) do
     #load substation values using collector
     collec()
-
+    SCADAMaster.Device.WeatherApi.collect_weather
     # Schadule the work
     do_schedule()
 

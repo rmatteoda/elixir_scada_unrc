@@ -26,11 +26,11 @@ defmodule SCADAMaster.Mixfile do
   defp deps do
     [{:ex_modbus, git: "https://github.com/jwarwick/ex_modbus.git"},
      {:postgrex, ">= 0.0.0"},
-     {:ecto, ">= 0.0.0"},
+     {:ecto, ">= 1.1.8"},
      {:logger_file_backend, ">= 0.0.4"},
      {:exrm, "~> 1.0.8"},
      {:csvlixir, "~> 2.0.3"},
      {:httpoison, "~> 0.9.0"},
-     {:poison, "~> 3.0"}]
+     {:poison, "~> 2.0"}]
   end
 end
