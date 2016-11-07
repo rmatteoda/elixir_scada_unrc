@@ -48,6 +48,6 @@ require Logger
   end
 
   defp do_convert(_, v) do
-    {:ok, v }
+    {:ok,v}
   end
 end

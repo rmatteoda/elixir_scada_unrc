@@ -19,7 +19,7 @@ defmodule SCADAMaster.Device.Collector do
   end
 
   ## Server Callbacks
-  def handle_call({:lookup}, _from, { _} = state) do
+  def handle_call({:lookup}, _from, {_} = state) do
       {:noreply, state}
   end
 
@@ -80,9 +80,9 @@ defmodule SCADAMaster.Device.Collector do
   """
   defp do_read_register(pid, register_offset) do        
     try do      
-      #response = ExModbus.Client.read_data pid, 1, register_offset, 2
-      #{:read_holding_registers, values} = Map.get(response, :data)  
-      [value1, value2] = [17249, 886]
+      response = ExModbus.Client.read_data pid, 1, register_offset, 2
+      {:read_holding_registers, [value1, value2]} = Map.get(response, :data)  
+      #[value1, value2] = [17249, 886]
 
       float_byte1 = value1 |> :binary.encode_unsigned |> Base.encode16    
       float_byte2 = value2 |> :binary.encode_unsigned |> Base.encode16
@@ -105,10 +105,10 @@ defmodule SCADAMaster.Device.Collector do
                                       |> String.to_char_list 
                                       |> :inet_parse.address
 
-    #{:ok, pid} = ExModbus.Client.start_link {ip_a, ip_b, ip_c, ip_d}
-    #status = ExModbus.Client.status pid
-    {:ok, 1, :on}   
-    #{:ok, pid, status}   
+    {:ok, pid} = ExModbus.Client.start_link {ip_a, ip_b, ip_c, ip_d}
+    status = ExModbus.Client.status pid
+    #{:ok, 1, :on}   
+    {:ok, pid, status}   
   end
 
 end
