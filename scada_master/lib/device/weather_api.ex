@@ -29,7 +29,7 @@ require Logger
 
   defp do_save_weather(weather_map) do 
     weather_main = Map.new(weather_map["main"], fn {key, val} -> 
-                                               {:ok, val} = convert(String.to_atom(key),val)
+                                               {:ok, val} = convert(String.to_atom(key),val)#use .to_existing_atom?
                                                {key, val} 
                                              end)
     SCADAMaster.Storage.StorageBind.storage_collected_weather(weather_main)

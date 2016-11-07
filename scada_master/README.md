@@ -1,24 +1,5 @@
 # SCADAMaster
 
-#to create DB, migrate scheme and seed first data
-* `mix do deps.get, compile`
-* `mix ecto.create`
-* `mix ecto.gen.migration create_tables_device
-* `mix ecto.migrate`
-* `mix run priv/repo/seeds.exs`
-
-#to start app
-* `iex -S mix`
-
-export PATH=$PATH:/Applications/Postgres.app/Contents/Versions/latest/bin
-
-Call wheather api Rio Cuarto
-http://api.openweathermap.org/data/2.5/weather?q=Rio%20Cuarto&appid=9f93848b56f03956ac309647a7132103
-
-TODO:
-- Hacer Test cases 
-- Documentar codigo
-
 ## Installation
 
 If [available in Hex](https://hex.pm/docs/publish), the package can be installed as:
