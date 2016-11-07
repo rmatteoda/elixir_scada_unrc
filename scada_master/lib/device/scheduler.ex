@@ -3,7 +3,7 @@ defmodule SCADAMaster.Device.Scheduler do
   require Logger
 
 # configure time in ms to collect data from scada devies.
-  @collect_time 1 * 30000 # x minutes (1)
+  @collect_time 1 * 30_000 # x minutes (1)
 
   ## Client API
   @doc """

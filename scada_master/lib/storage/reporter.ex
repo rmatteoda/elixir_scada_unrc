@@ -3,7 +3,7 @@ defmodule SCADAMaster.Storage.Reporter do
   require Logger
 
 # configure time in ms to collect data from scada devies.
-  @report_time 60 * 60000 #  (60 minutos)
+  @report_time 60 * 60_000 #  (60 minutos)
   #path to save the report csv file
   @report_path "/Users/rammatte/Workspace/UNRC/SCADA/elixir/scada_project/scada_master/"
 
