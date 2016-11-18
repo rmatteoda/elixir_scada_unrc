@@ -43,5 +43,6 @@ defmodule Repo.CreateTables do
   def down do
     drop index(:device, [:substation_id])
     drop table(:substations)
+    drop table(:weather)
   end
 end

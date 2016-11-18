@@ -26,6 +26,17 @@ defmodule SCADAMaster.Storage.StorageBind do
   end
 
   @doc """
+  Return all collected data from substation
+  """
+  def find_weather_data() do
+    query = from weather in SCADAMaster.Storage.Weather,
+        order_by: [asc: :updated_at],
+        select: weather
+
+    ScadaMaster.Repo.all(query, log: false)
+  end
+
+  @doc """
   Save collected data from substation into device table
   """
   def storage_collected_data(substation_values) do    

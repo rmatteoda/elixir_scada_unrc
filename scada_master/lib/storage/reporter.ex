@@ -3,10 +3,10 @@ defmodule SCADAMaster.Storage.Reporter do
   require Logger
 
 # configure time in ms to collect data from scada devies.
-  @report_time 60 * 60_000 #  (60 minutos)
+  @report_time 1 * 60_000 #  (60 minutos)
   #path to save the report csv file
   @report_path "/Users/rammatte/Workspace/UNRC/SCADA/elixir/scada_project/scada_master/"
-
+  
   def start_link do
     GenServer.start_link(__MODULE__, %{})
   end
@@ -29,14 +29,16 @@ defmodule SCADAMaster.Storage.Reporter do
     Process.send_after(self(), :tick, @report_time) 
   end
   
-   @doc """
+  @doc """
   for each substation report into a csv file all data collected
   """
   def report() do
     # get the table configured with all substation ips
-    substation_list = Application.get_env(:scada_master,:device_table) #save the device table configured    
-    
+    substation_list = Application.get_env(:scada_master,:device_table) #save the device table configured        
     do_report substation_list
+
+    #report weather data
+    do_report_weather()
   end
 
   defp do_report([subconfig | substation_list]) do
@@ -56,22 +58,39 @@ defmodule SCADAMaster.Storage.Reporter do
   made a query to db and get all values of substation
   dump values into csv file report
   """
-  defp do_report_table(dev_table_result, substation_name) do
+  def do_report_table(dev_table_result, substation_name) do
     file_name = Path.join(@report_path, substation_name <> "_data.csv")
     f = File.open!(file_name, [:write, :utf8])
 
     Enum.each(dev_table_result, fn(device) -> 
-      IO.write(f, CSVLixir.write_row([device.substation_id,device.voltage_a, device.voltage_b, device.voltage_c,
+      IO.write(f, CSVLixir.write_row([substation_name,
+                                      device.voltage_a, device.voltage_b, device.voltage_c,
                                       device.current_a, device.current_b, device.current_c,
                                       device.activepower_a, device.activepower_b, device.activepower_c,
                                       device.reactivepower_a, device.reactivepower_b, device.reactivepower_c,
                                       device.totalactivepower,device.totalreactivepower,
-                                      device.unbalance_voltage,device.unbalance_current]))
+                                      device.unbalance_voltage,device.unbalance_current,
+                                      Ecto.DateTime.to_string(device.inserted_at)]))
     end)  
     
     File.close(f)
-
   end
 
+  defp do_report_weather() do
+
+    weather_table = SCADAMaster.Storage.StorageBind.find_weather_data()
+    
+    file_name = Path.join(@report_path, "weather_data.csv")
+    f = File.open!(file_name, [:write, :utf8])
+
+    Enum.each(weather_table, fn(weather) -> 
+      IO.write(f, CSVLixir.write_row([weather.temp,
+                                      weather.pressure, 
+                                      weather.humidity,
+                                      Ecto.DateTime.to_string(weather.inserted_at)]))
+    end)  
+    
+    File.close(f)
+  end
 
 end
