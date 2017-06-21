@@ -8,7 +8,8 @@ config :scada_master,
 
 # configure ip of diferent device connected to substation to be monitored.
 config :scada_master, :device_table,
-       [%{ip: "192.168.0.5", name: "sub_anf"}]
+       [%{ip: "192.168.0.5", name: "sub_anf"},
+   		%{ip: "192.168.0.6", name: "sub_jardin"}]
 
 # logger configuration 
 config :logger,

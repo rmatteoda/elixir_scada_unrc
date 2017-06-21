@@ -5,8 +5,12 @@ defmodule SCADAMaster.Mixfile do
     [app: :scada_master,
      version: "0.0.1",
      elixir: "~> 1.2",
+     build_embedded: Mix.env == :prod,
+     start_permanent: Mix.env == :prod,
      deps: deps(),
-     aliases: aliases()]
+     aliases: aliases(),
+     docs: [main: "readme",
+            extras: ["README.md"]]]
   end
 
   # Configuration for the OTP application
@@ -25,7 +29,7 @@ defmodule SCADAMaster.Mixfile do
   defp aliases do
     ["ecto.setup": ["ecto.create", "ecto.migrate", "run priv/repo/seeds.exs"],
      "ecto.reset": ["ecto.drop", "ecto.setup"],
-     "ecto.test":  ["ecto.reset", "test"]]
+     "ecto.test":  ["ecto.create --quiet", "ecto.migrate", "test"]]
   end
 
   # Dependencies can be Hex packages:
