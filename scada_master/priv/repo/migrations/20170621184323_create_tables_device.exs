@@ -1,4 +1,5 @@
-defmodule Repo.CreateTables do
+defmodule ScadaMaster.Repo.Migrations.CreateTablesDevice do
+#defmodule Repo.CreateTables do
   use Ecto.Migration
 
   def up do
@@ -46,3 +47,4 @@ defmodule Repo.CreateTables do
     drop table(:weather)
   end
 end
+

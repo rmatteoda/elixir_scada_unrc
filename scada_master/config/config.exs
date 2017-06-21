@@ -2,20 +2,15 @@
 # and its dependencies with the aid of the Mix.Config module.
 use Mix.Config
 
-# configure ip of diferent device connected to substation to be monitored.
-config :scada_master, :device_table,
-       [%{ip: "192.168.0.1", name: "trafo1"}]
-
-# configure the register to be read for each device (reference values from sempron ).
-config :scada_master, :register_table,
-       [{:v, "1"},
-        {:l, "3"},
-        {:i, "5"}]
-
+# General application configuration
 config :scada_master,
   ecto_repos: [ScadaMaster.Repo]
 
-# log config 
+# configure ip of diferent device connected to substation to be monitored.
+config :scada_master, :device_table,
+       [%{ip: "192.168.0.5", name: "sub_anf"}]
+
+# logger configuration 
 config :logger,
   backends: [{LoggerFileBackend, :debug},
              {LoggerFileBackend, :error}]
@@ -28,4 +23,6 @@ config :logger, :error,
   path: "log/error.log",
   level: :error
 
+# Import environment specific config. This must remain at the bottom
+# of this file so it overrides the configuration defined above.
 import_config "#{Mix.env}.exs"

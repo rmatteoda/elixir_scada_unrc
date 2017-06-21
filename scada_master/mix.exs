@@ -5,17 +5,23 @@ defmodule SCADAMaster.Mixfile do
     [app: :scada_master,
      version: "0.0.1",
      elixir: "~> 1.2",
-     deps: deps,
-     aliases: aliases]
+     deps: deps(),
+     aliases: aliases()]
   end
 
   # Configuration for the OTP application
   # Type "mix help compile.app" for more information
   def application do
-    [mod: {SCADAMaster, []},
+    [mod: {SCADAMaster.Application, []},
      applications: [:postgrex, :ecto, :logger, :logger_file_backend, :ex_modbus, :httpoison]]
   end
 
+  # Aliases are shortcuts or tasks specific to the current project.
+  # For example, to create, migrate and run the seeds file at once:
+  #
+  #     $ mix ecto.setup
+  #
+  # See the documentation for `Mix` for more info on aliases.
   defp aliases do
     ["ecto.setup": ["ecto.create", "ecto.migrate", "run priv/repo/seeds.exs"],
      "ecto.reset": ["ecto.drop", "ecto.setup"],
@@ -23,6 +29,9 @@ defmodule SCADAMaster.Mixfile do
   end
 
   # Dependencies can be Hex packages:
+  # Specifies your project dependencies.
+  #
+  # Type `mix help deps` for examples and options.
   defp deps do
     [{:ex_modbus, git: "https://github.com/jwarwick/ex_modbus.git"},
      {:postgrex, ">= 0.0.0"},

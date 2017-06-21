@@ -80,12 +80,26 @@ defmodule SCADAMaster.Device.Collector do
   """
   defp do_read_register(pid, register_offset) do        
     try do      
-      response = ExModbus.Client.read_data pid, 1, register_offset, 2
-      {:read_holding_registers, [value1, value2]} = Map.get(response, :data)  
-      #[value1, value2] = [17249, 886]
+      #response = ExModbus.Client.read_data pid, 1, register_offset, 2
+      #{:read_holding_registers, [value1, value2]} = Map.get(response, :data)  
+      [modbus_reg_1, modbus_reg_2] = [17249, 886]
 
-      float_byte1 = value1 |> :binary.encode_unsigned |> Base.encode16    
-      float_byte2 = value2 |> :binary.encode_unsigned |> Base.encode16
+      float_byte1 = modbus_reg_1
+                    |> :binary.encode_unsigned 
+                    |> Base.encode16    
+
+      float_byte2 = modbus_reg_2 |> :binary.encode_unsigned |> Base.encode16
+      defmodule Table do
+  def ping do
+    receive do
+      :ping -> IO.puts('received ping')
+    end
+  end
+
+  def start do
+    spawn(__MODULE__, :ping, [])
+  end
+end
       <<float_val::size(32)-float>> = Base.decode16!(float_byte1 <> float_byte2)
          
       {:ok, float_val} 
@@ -101,14 +115,14 @@ defmodule SCADAMaster.Device.Collector do
   """
   defp do_connect(ip_substation) do
     Logger.debug "connecting to #{ip_substation}"
-    {:ok, {ip_a, ip_b, ip_c, ip_d}} = ip_substation 
-                                      |> String.to_char_list 
-                                      |> :inet_parse.address
+    #{:ok, {ip_a, ip_b, ip_c, ip_d}} = ip_substation 
+    #                                  |> String.to_char_list 
+    #                                  |> :inet_parse.address
 
-    {:ok, pid} = ExModbus.Client.start_link {ip_a, ip_b, ip_c, ip_d}
-    status = ExModbus.Client.status pid
-    #{:ok, 1, :on}   
-    {:ok, pid, status}   
+    #{:ok, pid} = ExModbus.Client.start_link {ip_a, ip_b, ip_c, ip_d}
+    #status = ExModbus.Client.status pid
+    {:ok, 1, :on}   
+    #{:ok, pid, status}   
   end
 
 end
