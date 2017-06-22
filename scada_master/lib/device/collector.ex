@@ -89,17 +89,7 @@ defmodule SCADAMaster.Device.Collector do
                     |> Base.encode16    
 
       float_byte2 = modbus_reg_2 |> :binary.encode_unsigned |> Base.encode16
-      defmodule Table do
-  def ping do
-    receive do
-      :ping -> IO.puts('received ping')
-    end
-  end
 
-  def start do
-    spawn(__MODULE__, :ping, [])
-  end
-end
       <<float_val::size(32)-float>> = Base.decode16!(float_byte1 <> float_byte2)
          
       {:ok, float_val} 

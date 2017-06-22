@@ -5,8 +5,8 @@ defmodule SCADAMaster.Storage.Importer do
   # Import substations
   def import_substations([subconfig | substation_list]) do
     case ScadaMaster.Repo.get_by(SCADAMaster.Storage.Substation, name: subconfig.name) do
-          %{id: id} -> id
           nil -> insert(subconfig)
+          _ -> nil
     end
     import_substations substation_list
   end
