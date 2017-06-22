@@ -18,6 +18,9 @@ defmodule SCADAMaster.Device.Scheduler do
   """
   def init(state) do
     Logger.debug "Start Scheduler handler " 
+
+    config_substations()
+
     # Schedule the work
     do_schedule()
 
@@ -25,9 +28,12 @@ defmodule SCADAMaster.Device.Scheduler do
   end
 
   def handle_info(:work, state) do
-    #load substation values using collector adn weather data from openweather api
+    #load substation values using collector 
+    #load weather data of Rio Cuarto from openweather api
     collec()
+    
     SCADAMaster.Device.WeatherApi.collect_weather
+    
     # Schadule the work
     do_schedule()
 
@@ -56,4 +62,9 @@ defmodule SCADAMaster.Device.Scheduler do
 
   defp do_collect_substations(_, []), do: nil
 
+  #load substations from config file and store it if does not exist
+  defp config_substations() do
+    sub_table = Application.get_env(:scada_master,:device_table)
+    SCADAMaster.Storage.Importer.import_substations sub_table
+  end
 end
