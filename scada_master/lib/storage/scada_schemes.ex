@@ -1,10 +1,19 @@
 defmodule SCADAMaster.Storage.Substation do
   use Ecto.Schema
+  import Ecto.Changeset
+
   schema "substations" do
     has_many :local_device, SCADAMaster.Storage.Device
     field :name, :string
   end
+  
   @required_fields ~w(name)
+
+  def changeset(substation, params \\ :empty) do
+    substation
+    |> cast(params, @required_fields)
+    |> validate_required(@required_fields)
+  end
 end
 
 defmodule SCADAMaster.Storage.Device do
@@ -29,7 +38,7 @@ defmodule SCADAMaster.Storage.Device do
     field :totalreactivepower, :float, default: 0.0
     field :unbalance_voltage, :float, default: 0.0
     field :unbalance_current, :float, default: 0.0
-    timestamps
+    timestamps()
   end
 
   @required_fields ~w(voltage_a voltage_b voltage_c 
@@ -43,6 +52,7 @@ defmodule SCADAMaster.Storage.Device do
   def changeset(device, params \\ :empty) do
     device
     |> cast(params, @required_fields, @optional_fields)
+    |> validate_required(@required_fields)
   end
 end
 
@@ -56,7 +66,7 @@ defmodule SCADAMaster.Storage.Weather do
     field :pressure, :float
     field :wind_speed, :float
     field :cloudiness, :string
-    timestamps
+    timestamps()
   end
 
   @required_fields ~w(humidity pressure temp)
@@ -65,6 +75,7 @@ defmodule SCADAMaster.Storage.Weather do
   def changeset(weather, params \\ :empty) do
     weather
     |> cast(params, @required_fields, @optional_fields)
+    |> validate_required(@required_fields)
   end
 
 end

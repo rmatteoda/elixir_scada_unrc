@@ -1,4 +1,3 @@
-
 defmodule SCADAMaster.Storage.StorageBind do
   require Logger
   import Ecto.Query
@@ -61,7 +60,7 @@ defmodule SCADAMaster.Storage.StorageBind do
   """
   def storage_collected_weather(weather_values) do    
     try do
-      changeset = SCADAMaster.Storage.Weather.changeset(%SCADAMaster.Storage.Weather{}, weather_values)   
+      changeset = SCADAMaster.Storage.Weather.changeset(%SCADAMaster.Storage.Weather{}, weather_values)
       if changeset.valid? do
         Logger.debug "Store weather values into DB "
         ScadaMaster.Repo.insert!(changeset, log: false)
@@ -72,6 +71,7 @@ defmodule SCADAMaster.Storage.StorageBind do
     rescue
       DBConnection.ConnectionError -> Logger.error "storage_collected_weather: find_substation_by_name DBConnection.ConnectionError "
       UndefinedFunctionError -> Logger.error "storage_collected_weather: UndefinedFunctionError "
+      Ecto.InvalidChangesetError -> Logger.error "storage_collected_weather: could not perform insert because changeset is invalid"
     end
   end
 

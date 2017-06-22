@@ -1,4 +1,3 @@
-
 defmodule SCADAMaster.Storage.Importer do
   require Logger
 
