@@ -7,12 +7,10 @@ defmodule SCADAMaster.Storage.Substation do
     field :name, :string
   end
   
-  @required_fields ~w(name)
-
   def changeset(substation, params \\ :empty) do
     substation
-    |> cast(params, @required_fields)
-    |> validate_required(@required_fields)
+    |> cast(params, [:name])
+    |> validate_required(:name)
     |> unique_constraint(:name)
   end
 end

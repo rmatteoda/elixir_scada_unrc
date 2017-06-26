@@ -33,7 +33,7 @@ defmodule ScadaMaster.Repo.Migrations.CreateTablesDevice do
     # We also add an index so we can find substations
     create index(:device, [:substation_id])
 
-    create unique_index(:substations, [:name], name: :unique_names)
+    create unique_index(:substations, [:name])
 
     #we save the weather data from openweather api
     create table(:weather) do
