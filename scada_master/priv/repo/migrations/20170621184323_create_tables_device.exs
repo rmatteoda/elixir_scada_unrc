@@ -3,8 +3,14 @@ defmodule ScadaMaster.Repo.Migrations.CreateTablesDevice do
   use Ecto.Migration
 
   def up do
+    #substation has a unique name for now
+    create table(:substations) do
+      add :name, :string, size: 40, null: false, unique: true
+    end
+
+    # device belong to a substation
     create table(:device) do
-      add :substation_id, :integer
+      add :substation_id, references(:substations)
       add :voltage_a,   :float
       add :voltage_b,   :float
       add :voltage_c,   :float
@@ -23,12 +29,13 @@ defmodule ScadaMaster.Repo.Migrations.CreateTablesDevice do
       add :unbalance_current, :float
       timestamps
     end
+
+    # We also add an index so we can find substations
     create index(:device, [:substation_id])
 
-    create table(:substations) do
-      add :name, :string, size: 40, null: false, unique: true
-    end
+    create unique_index(:substations, [:name], name: :unique_names)
 
+    #we save the weather data from openweather api
     create table(:weather) do
       add :temp, :float
       add :humidity,   :float
@@ -38,7 +45,6 @@ defmodule ScadaMaster.Repo.Migrations.CreateTablesDevice do
       timestamps
     end
 
-    create unique_index(:substations, [:name], name: :unique_names)
   end
 
   def down do

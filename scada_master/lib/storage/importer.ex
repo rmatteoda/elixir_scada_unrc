@@ -13,7 +13,7 @@ defmodule SCADAMaster.Storage.Importer do
   def import_substations([]), do: nil
 
   defp insert(subconfig) do
-    ScadaMaster.Repo.insert!(%SCADAMaster.Storage.Substation{name: subconfig.name}, log: false)
+    ScadaMaster.Repo.insert!(%SCADAMaster.Storage.Substation{name: subconfig.name}, log: true)
   end
 
 end

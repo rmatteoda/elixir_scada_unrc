@@ -13,6 +13,7 @@ defmodule SCADAMaster.Storage.Substation do
     substation
     |> cast(params, @required_fields)
     |> validate_required(@required_fields)
+    |> unique_constraint(:name)
   end
 end
 
