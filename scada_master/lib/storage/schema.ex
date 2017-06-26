@@ -3,8 +3,10 @@ defmodule SCADAMaster.Storage.Substation do
   import Ecto.Changeset
 
   schema "substations" do
-    has_many :local_device, SCADAMaster.Storage.Device
+    has_many :local_measured, SCADAMaster.Storage.MeasuredValues
     field :name, :string
+
+    timestamps()
   end
   
   def changeset(substation, params \\ :empty) do
@@ -15,11 +17,11 @@ defmodule SCADAMaster.Storage.Substation do
   end
 end
 
-defmodule SCADAMaster.Storage.Device do
+defmodule SCADAMaster.Storage.MeasuredValues do
   use Ecto.Schema
   import Ecto.Changeset
 
-  schema "device" do
+  schema "measured_values" do
     belongs_to :substation, SCADAMaster.Storage.Substation
     field :voltage_a, :float, default: 0.0
     field :voltage_b, :float, default: 0.0
@@ -37,6 +39,7 @@ defmodule SCADAMaster.Storage.Device do
     field :totalreactivepower, :float, default: 0.0
     field :unbalance_voltage, :float, default: 0.0
     field :unbalance_current, :float, default: 0.0
+    
     timestamps()
   end
 
@@ -48,8 +51,8 @@ defmodule SCADAMaster.Storage.Device do
                       totalactivepower totalreactivepower 
                       unbalance_voltage unbalance_current)
 
-  def changeset(device, params \\ :empty) do
-    device
+  def changeset(measured_value, params \\ :empty) do
+    measured_value
     |> cast(params, @required_fields, @optional_fields)
     |> validate_required(@required_fields)
   end

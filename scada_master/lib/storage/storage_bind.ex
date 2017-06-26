@@ -16,7 +16,7 @@ defmodule SCADAMaster.Storage.StorageBind do
   Return all collected data from substation
   """
   def find_collecteddata_by_subid(substation_id) do
-    query = from dev in SCADAMaster.Storage.Device,
+    query = from dev in SCADAMaster.Storage.MeasuredValues,
         where: dev.substation_id == ^substation_id,
         order_by: [asc: :updated_at],
         select: dev
@@ -36,14 +36,14 @@ defmodule SCADAMaster.Storage.StorageBind do
   end
 
   @doc """
-  Save collected data from substation into device table
+  Save collected data from substation into measured_valies table
   """
   def storage_collected_data(substation_values) do    
     try do
-      changeset = SCADAMaster.Storage.Device.changeset(%SCADAMaster.Storage.Device{}, substation_values)
+      changeset = SCADAMaster.Storage.MeasuredValues.changeset(%SCADAMaster.Storage.MeasuredValues{}, substation_values)
       
       if changeset.valid? do
-        Logger.debug "Store device-substations values into DB  "
+        Logger.debug "Store measured_valies-substations into DB  "
         ScadaMaster.Repo.insert!(changeset, log: false)
       else
         Logger.error "storage_collected_data: error in changset "      

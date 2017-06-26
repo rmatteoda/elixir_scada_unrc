@@ -6,10 +6,12 @@ defmodule ScadaMaster.Repo.Migrations.CreateTablesDevice do
     #substation has a unique name for now
     create table(:substations) do
       add :name, :string, size: 40, null: false, unique: true
+
+      timestamps()
     end
 
-    # device belong to a substation
-    create table(:device) do
+    #measured_values belong to a substation
+    create table(:measured_values) do
       add :substation_id, references(:substations)
       add :voltage_a,   :float
       add :voltage_b,   :float
@@ -27,11 +29,12 @@ defmodule ScadaMaster.Repo.Migrations.CreateTablesDevice do
       add :totalreactivepower, :float
       add :unbalance_voltage, :float
       add :unbalance_current, :float
-      timestamps
+
+      timestamps()
     end
 
     # We also add an index so we can find substations
-    create index(:device, [:substation_id])
+    create index(:measured_values, [:substation_id])
 
     create unique_index(:substations, [:name])
 
@@ -42,13 +45,14 @@ defmodule ScadaMaster.Repo.Migrations.CreateTablesDevice do
       add :pressure,   :float
       add :wind_speed, :float
       add :cloudiness, :string
-      timestamps
+
+      timestamps()
     end
 
   end
 
   def down do
-    drop index(:device, [:substation_id])
+    drop index(:measured_values, [:substation_id])
     drop table(:substations)
     drop table(:weather)
   end

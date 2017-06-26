@@ -34,7 +34,7 @@ defmodule SCADAMaster.Storage.Reporter do
   """
   def report() do
     # get the table configured with all substation ips
-    substation_list = Application.get_env(:scada_master,:device_table) #save the device table configured        
+    substation_list = Application.get_env(:scada_master,:measured_values_table) #save the measured_values table configured        
     do_report substation_list
 
     #report weather data
@@ -62,15 +62,15 @@ defmodule SCADAMaster.Storage.Reporter do
     file_name = Path.join(@report_path, substation_name <> "_data.csv")
     f = File.open!(file_name, [:write, :utf8])
 
-    Enum.each(dev_table_result, fn(device) -> 
+    Enum.each(dev_table_result, fn(measured_values) -> 
       IO.write(f, CSVLixir.write_row([substation_name,
-                                      device.voltage_a, device.voltage_b, device.voltage_c,
-                                      device.current_a, device.current_b, device.current_c,
-                                      device.activepower_a, device.activepower_b, device.activepower_c,
-                                      device.reactivepower_a, device.reactivepower_b, device.reactivepower_c,
-                                      device.totalactivepower,device.totalreactivepower,
-                                      device.unbalance_voltage,device.unbalance_current,
-                                      Ecto.DateTime.to_string(device.inserted_at)]))
+                                      measured_values.voltage_a, measured_values.voltage_b, measured_values.voltage_c,
+                                      measured_values.current_a, measured_values.current_b, measured_values.current_c,
+                                      measured_values.activepower_a, measured_values.activepower_b, measured_values.activepower_c,
+                                      measured_values.reactivepower_a, measured_values.reactivepower_b, measured_values.reactivepower_c,
+                                      measured_values.totalactivepower,measured_values.totalreactivepower,
+                                      measured_values.unbalance_voltage,measured_values.unbalance_current,
+                                      Ecto.DateTime.to_string(measured_values.inserted_at)]))
     end)  
     
     File.close(f)
