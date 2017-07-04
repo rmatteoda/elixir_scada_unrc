@@ -1,9 +1,10 @@
-defmodule SCADAMaster.Storage.Reporter do
+defmodule SCADAMaster.Schema.Reporter do
   use GenServer
   require Logger
 
 # configure time in ms to collect data from scada devies.
-  @report_time 1 * 60_000 #  (60 minutos)
+  #@report_time 1 * 60_000 #  (60 minutos)
+  
   #path to save the report csv file
   @report_path "/Users/rammatte/Workspace/UNRC/SCADA/elixir/scada_project/scada_master/"
   
@@ -16,8 +17,7 @@ defmodule SCADAMaster.Storage.Reporter do
     {:ok, state} 
   end
 
-  def handle_info(:tick, state) do
-    
+  def handle_info(:report, state) do
     report()
 
     # Start the timer again
@@ -26,7 +26,7 @@ defmodule SCADAMaster.Storage.Reporter do
   end
 
   defp do_schedule() do
-    Process.send_after(self(), :tick, @report_time) 
+    Process.send_after(self(), :report, report_after()) 
   end
   
   @doc """
@@ -43,9 +43,9 @@ defmodule SCADAMaster.Storage.Reporter do
 
   defp do_report([subconfig | substation_list]) do
 
-    case SCADAMaster.Storage.StorageBind.find_substation_id_by_name(subconfig.name) do 
+    case SCADAMaster.Schema.StorageBind.find_substation_id_by_name(subconfig.name) do 
       nil -> Logger.error "Substation not found in DB to generate report"
-      sub_id -> dev_table_result = SCADAMaster.Storage.StorageBind.find_collecteddata_by_subid(sub_id)
+      sub_id -> dev_table_result = SCADAMaster.Schema.StorageBind.find_collecteddata_by_subid(sub_id)
                 do_report_table(dev_table_result,subconfig.name)
     end
 
@@ -78,7 +78,7 @@ defmodule SCADAMaster.Storage.Reporter do
 
   defp do_report_weather() do
 
-    weather_table = SCADAMaster.Storage.StorageBind.find_weather_data()
+    weather_table = SCADAMaster.Schema.StorageBind.find_weather_data()
     
     file_name = Path.join(@report_path, "weather_data.csv")
     f = File.open!(file_name, [:write, :utf8])
@@ -93,4 +93,8 @@ defmodule SCADAMaster.Storage.Reporter do
     File.close(f)
   end
 
+  defp report_after do
+    Application.get_env(:reporter, ScadaMaster)
+    |> Keyword.fetch!(:report_after)
+  end
 end

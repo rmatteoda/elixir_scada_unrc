@@ -65,6 +65,6 @@ defmodule SCADAMaster.Device.Scheduler do
   #load substations from config file and store it if does not exist
   defp config_substations() do
     sub_table = Application.get_env(:scada_master,:device_table)
-    SCADAMaster.Storage.Importer.import_substations sub_table
+    SCADAMaster.Schema.Importer.import_substations sub_table
   end
 end

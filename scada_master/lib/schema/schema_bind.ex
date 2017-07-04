@@ -1,4 +1,4 @@
-defmodule SCADAMaster.Storage.StorageBind do
+defmodule SCADAMaster.Schema.StorageBind do
   require Logger
   import Ecto.Query
  
@@ -6,7 +6,7 @@ defmodule SCADAMaster.Storage.StorageBind do
   Return substation id from substation name
   """
   def find_substation_id_by_name(substation_name) do
-    case ScadaMaster.Repo.get_by(SCADAMaster.Storage.Substation, name: substation_name) do
+    case ScadaMaster.Repo.get_by(SCADAMaster.Schema.Substation, name: substation_name) do
           %{id: id} -> id
           _ -> nil
     end
@@ -16,7 +16,7 @@ defmodule SCADAMaster.Storage.StorageBind do
   Return all collected data from substation
   """
   def find_collecteddata_by_subid(substation_id) do
-    query = from dev in SCADAMaster.Storage.MeasuredValues,
+    query = from dev in SCADAMaster.Schema.MeasuredValues,
         where: dev.substation_id == ^substation_id,
         order_by: [asc: :updated_at],
         select: dev
@@ -28,7 +28,7 @@ defmodule SCADAMaster.Storage.StorageBind do
   Return all collected data from substation
   """
   def find_weather_data() do
-    query = from weather in SCADAMaster.Storage.Weather,
+    query = from weather in SCADAMaster.Schema.Weather,
         order_by: [asc: :updated_at],
         select: weather
 
@@ -40,7 +40,7 @@ defmodule SCADAMaster.Storage.StorageBind do
   """
   def storage_collected_data(substation_values) do    
     try do
-      changeset = SCADAMaster.Storage.MeasuredValues.changeset(%SCADAMaster.Storage.MeasuredValues{}, substation_values)
+      changeset = SCADAMaster.Schema.MeasuredValues.changeset(%SCADAMaster.Schema.MeasuredValues{}, substation_values)
       
       if changeset.valid? do
         Logger.debug "Store measured_valies-substations into DB  "
@@ -60,7 +60,7 @@ defmodule SCADAMaster.Storage.StorageBind do
   """
   def storage_collected_weather(weather_values) do    
     try do
-      changeset = SCADAMaster.Storage.Weather.changeset(%SCADAMaster.Storage.Weather{}, weather_values)
+      changeset = SCADAMaster.Schema.Weather.changeset(%SCADAMaster.Schema.Weather{}, weather_values)
       if changeset.valid? do
         Logger.debug "Store weather values into DB "
         ScadaMaster.Repo.insert!(changeset, log: false)

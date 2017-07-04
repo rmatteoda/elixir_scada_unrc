@@ -24,6 +24,9 @@ config :logger, :error,
   path: "log/error.log",
   level: :error
 
+config :scada_master, ScadaMaster,
+  report_after: 1000 * 60 * 60 * 2 # 2 hours
+
 # Import environment specific config. This must remain at the bottom
 # of this file so it overrides the configuration defined above.
 import_config "#{Mix.env}.exs"

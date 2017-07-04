@@ -1,28 +1,9 @@
-defmodule SCADAMaster.Storage.Substation do
-  use Ecto.Schema
-  import Ecto.Changeset
-
-  schema "substations" do
-    has_many :local_measured, SCADAMaster.Storage.MeasuredValues
-    field :name, :string
-
-    timestamps()
-  end
-  
-  def changeset(substation, params \\ :empty) do
-    substation
-    |> cast(params, [:name])
-    |> validate_required(:name)
-    |> unique_constraint(:name)
-  end
-end
-
-defmodule SCADAMaster.Storage.MeasuredValues do
+defmodule SCADAMaster.Schema.MeasuredValues do
   use Ecto.Schema
   import Ecto.Changeset
 
   schema "measured_values" do
-    belongs_to :substation, SCADAMaster.Storage.Substation
+    belongs_to :substation, SCADAMaster.Schema.Substation
     field :voltage_a, :float, default: 0.0
     field :voltage_b, :float, default: 0.0
     field :voltage_c, :float, default: 0.0
@@ -56,28 +37,4 @@ defmodule SCADAMaster.Storage.MeasuredValues do
     |> cast(params, @required_fields, @optional_fields)
     |> validate_required(@required_fields)
   end
-end
-
-defmodule SCADAMaster.Storage.Weather do
-  use Ecto.Schema
-  import Ecto.Changeset
-
-  schema "weather" do
-    field :temp, :float
-    field :humidity, :float
-    field :pressure, :float
-    field :wind_speed, :float
-    field :cloudiness, :string
-    timestamps()
-  end
-
-  @required_fields ~w(humidity pressure temp)
-  @optional_fields ~w(cloudiness wind_speed)
-
-  def changeset(weather, params \\ :empty) do
-    weather
-    |> cast(params, @required_fields, @optional_fields)
-    |> validate_required(@required_fields)
-  end
-
 end

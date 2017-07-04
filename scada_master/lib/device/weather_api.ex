@@ -32,7 +32,7 @@ require Logger
                                                {:ok, val} = convert(String.to_atom(key),val)#use .to_existing_atom?
                                                {key, val} 
                                              end)
-    SCADAMaster.Storage.StorageBind.storage_collected_weather(weather_main)
+    SCADAMaster.Schema.StorageBind.storage_collected_weather(weather_main)
   end
   
   @doc """

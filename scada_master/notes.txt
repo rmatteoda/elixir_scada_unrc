@@ -15,10 +15,24 @@ http://api.openweathermap.org/data/2.5/weather?q=Rio%20Cuarto&appid=9f93848b56f0
 To Do
 - refactor querys on storage package
 - refactor and review GenServers 
-- buscar mejor nombre para tabla 'devices' : measured? measured_value?
 - Hacer Test cases para todo (DB-Ecto test, ver curso)
 - Documentar codigo
 - configurar para docker y dialyzer
 - https://subvisual.co/blog/posts/137-tutorial-deploying-elixir-applications-with-docker-and-digital-ocean/
 
+definir el scada_collector en un projecto y la parte web en otro, usar phoenix. usar umbrella project
+agregar specs
+correr dialyzer
+desacoplar la base de datos, hacer la app independiente, si traigo la info del scada la tengo en memoria y despues la guardo en la db, si la db no esta disponible, puedo esperar porque tengo la info
+ver de usar Task y que tengo que supervisar
+con un supervisor solo me deberia alcanzar.. revisar arbol
+revisar estrategia de supervisor, ver como esta en libra, ver la cantidad de restart.
+revisar como hace el cast a :persist en el worker
+ver como hace el expire_after de la configuracion
+revisar como usa y en que caso cada funcion de los GenServer
+hacer todo independiente de la DB.
+ver api o funcion start_phase de la App en el app start.
+  - usado para recuperar info de la DB si la app se cae o el nodo cuando arranca de nuevo
+
+puedo usar el unbrella para tener separado el scada y la web, pero cuando hago deploy es buena practica deployarlo en nodos separados, que cada uno escale independientemente
 

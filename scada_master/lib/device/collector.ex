@@ -25,7 +25,7 @@ defmodule SCADAMaster.Device.Collector do
 
   def handle_cast({:collect, substation_name, substation_ip}, state) do
     case do_read_registers(substation_ip,substation_name) do
-      {:ok, substation_values} -> SCADAMaster.Storage.StorageBind.storage_collected_data(substation_values)
+      {:ok, substation_values} -> SCADAMaster.Schema.StorageBind.storage_collected_data(substation_values)
       {:error, reason} -> Logger.error "Error: #{reason}"
     end
 
@@ -64,7 +64,7 @@ defmodule SCADAMaster.Device.Collector do
                                                {key, val} 
                                              end)
      
-      case SCADAMaster.Storage.StorageBind.find_substation_id_by_name(substation_name) do 
+      case SCADAMaster.Schema.StorageBind.find_substation_id_by_name(substation_name) do 
           nil -> {:error, "Substation not found in DB to save collected data"}
           sub_id -> substation_values = Map.put(substationdata, :substation_id, sub_id)
                     {:ok, substation_values}
