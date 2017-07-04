@@ -3,10 +3,11 @@ defmodule SCADAMaster.Schema.Reporter do
   require Logger
 
 # configure time in ms to collect data from scada devies.
-  #@report_time 1 * 60_000 #  (60 minutos)
+  # The time of a report can be set with:
+  #`config :scada_master, ScadaMaster, report_after: 1000`
   
-  #path to save the report csv file
-  @report_path "/Users/rammatte/Workspace/UNRC/SCADA/elixir/scada_project/scada_master/"
+  #the path to save the report csv file can be set with:
+  #config: report_path "/Users/rammatte/Workspace/UNRC/SCADA/elixir/scada_project/scada_master/"
   
   def start_link do
     GenServer.start_link(__MODULE__, %{})
@@ -59,7 +60,7 @@ defmodule SCADAMaster.Schema.Reporter do
   dump values into csv file report
   """
   def do_report_table(dev_table_result, substation_name) do
-    file_name = Path.join(@report_path, substation_name <> "_data.csv")
+    file_name = Path.join(report_path(), substation_name <> "_data.csv")
     f = File.open!(file_name, [:write, :utf8])
 
     Enum.each(dev_table_result, fn(measured_values) -> 
@@ -80,7 +81,7 @@ defmodule SCADAMaster.Schema.Reporter do
 
     weather_table = SCADAMaster.Schema.StorageBind.find_weather_data()
     
-    file_name = Path.join(@report_path, "weather_data.csv")
+    file_name = Path.join(report_path(), "weather_data.csv")
     f = File.open!(file_name, [:write, :utf8])
 
     Enum.each(weather_table, fn(weather) -> 
@@ -94,7 +95,12 @@ defmodule SCADAMaster.Schema.Reporter do
   end
 
   defp report_after do
-    Application.get_env(:reporter, ScadaMaster)
+    Application.get_env(:scada_master, ScadaMaster)
     |> Keyword.fetch!(:report_after)
+  end
+
+  defp report_path do
+    Application.get_env(:scada_master, ScadaMaster)
+    |> Keyword.fetch!(:report_path)
   end
 end

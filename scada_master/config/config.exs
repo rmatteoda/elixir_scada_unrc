@@ -24,8 +24,15 @@ config :logger, :error,
   path: "log/error.log",
   level: :error
 
+#config time for reporter and collector
+config :scada_master, ScadaMaster,
+  collect_each: 1000 * 60 * 2 # 2 minutes
+
 config :scada_master, ScadaMaster,
   report_after: 1000 * 60 * 60 * 2 # 2 hours
+
+config :scada_master, ScadaMaster,
+  report_path: "/../../" # 2 minutes
 
 # Import environment specific config. This must remain at the bottom
 # of this file so it overrides the configuration defined above.

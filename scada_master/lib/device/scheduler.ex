@@ -3,8 +3,9 @@ defmodule SCADAMaster.Device.Scheduler do
   require Logger
 
 # configure time in ms to collect data from scada devies.
-  @collect_time 1 * 30_000 # x minutes (1)
-
+# The time for collect data from can be set in:
+  #`config :scada_master, ScadaMaster, collect_each: 1000`
+  
   ## Client API
   @doc """
   Starts the scheduler.
@@ -27,7 +28,7 @@ defmodule SCADAMaster.Device.Scheduler do
     {:ok, state}      
   end
 
-  def handle_info(:work, state) do
+  def handle_info(:collect, state) do
     #load substation values using collector 
     #load weather data of Rio Cuarto from openweather api
     collec()
@@ -41,7 +42,7 @@ defmodule SCADAMaster.Device.Scheduler do
   end
 
   defp do_schedule() do
-    Process.send_after(self(), :work, @collect_time) 
+    Process.send_after(self(), :collect, collect_each()) 
   end
 
   @doc """
@@ -66,5 +67,10 @@ defmodule SCADAMaster.Device.Scheduler do
   defp config_substations() do
     sub_table = Application.get_env(:scada_master,:device_table)
     SCADAMaster.Schema.Importer.import_substations sub_table
+  end
+
+  defp collect_each do
+    Application.get_env(:scada_master, ScadaMaster)
+    |> Keyword.fetch!(:collect_each)
   end
 end
