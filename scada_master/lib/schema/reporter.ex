@@ -20,7 +20,6 @@ defmodule SCADAMaster.Schema.Reporter do
 
   def handle_info(:report, state) do
     report()
-
     # Start the timer again
     do_schedule()
     {:noreply, state}
@@ -43,7 +42,6 @@ defmodule SCADAMaster.Schema.Reporter do
   end
 
   defp do_report([subconfig | substation_list]) do
-
     case SCADAMaster.Schema.StorageBind.find_substation_id_by_name(subconfig.name) do 
       nil -> Logger.error "Substation not found in DB to generate report"
       sub_id -> dev_table_result = SCADAMaster.Schema.StorageBind.find_collecteddata_by_subid(sub_id)
@@ -78,7 +76,6 @@ defmodule SCADAMaster.Schema.Reporter do
   end
 
   defp do_report_weather() do
-
     weather_table = SCADAMaster.Schema.StorageBind.find_weather_data()
     
     file_name = Path.join(report_path(), "weather_data.csv")

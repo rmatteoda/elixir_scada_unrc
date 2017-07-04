@@ -1,13 +1,19 @@
 defmodule SCADAMaster.Schema.Importer do
   require Logger
+  alias SCADAMaster.Schema.Substation
 
-  # Import substations. raise exception if there is substation with the same name and the app won't start
+  # Import substations. 
   def import_substations([subconfig | substation_list]) do
-    %SCADAMaster.Schema.Substation{}
-      |> SCADAMaster.Schema.Substation.changeset(%{name: subconfig.name})
-      |> ScadaMaster.Repo.insert!
+	try do
+	  %Substation{}
+      		|> Substation.changeset(%{name: subconfig.name})
+      		|> ScadaMaster.Repo.insert
+    rescue
+      DBConnection.ConnectionError ->
+        Logger.error "import_substations: Database is down"
+    end
 
-    import_substations substation_list
+    import_substations substation_list    
   end
 
   def import_substations([]), do: nil
