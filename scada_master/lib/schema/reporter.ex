@@ -34,7 +34,7 @@ defmodule SCADAMaster.Schema.Reporter do
   """
   def report() do
     # get the table configured with all substation ips
-    substation_list = Application.get_env(:scada_master,:measured_values_table) #save the measured_values table configured        
+    substation_list = Application.get_env(:scada_master,:device_table) #save the device_table table configured        
     do_report substation_list
 
     #report weather data

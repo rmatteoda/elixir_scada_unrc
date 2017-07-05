@@ -11,8 +11,8 @@ defmodule SCADAMaster.Schema.Weather do
     timestamps()
   end
 
-  @required_fields ~w(humidity pressure temp)
-  @optional_fields ~w(cloudiness wind_speed)
+  @required_fields [:humidity, :pressure, :temp]
+  @optional_fields [:cloudiness, :wind_speed]
 
   def changeset(weather, params \\ :empty) do
     weather
