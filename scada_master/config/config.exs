@@ -29,7 +29,7 @@ config :scada_master, ScadaMaster,
   collect_each: 1000 * 60 * 1 # 1 minutes
 
 config :scada_master, ScadaMaster,
-  report_after: 1000 * 60 * 1 # 2 minutes
+  report_after: 1000 * 60 * 20 # 20 minutes
 
 config :scada_master, ScadaMaster,
   report_path: "/Users/rammatte/Workspace/UNRC/SCADA/elixir/scada_project/scada_master/" 

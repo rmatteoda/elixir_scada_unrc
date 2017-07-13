@@ -21,6 +21,7 @@ To Do
 - Documentar codigo
 - configurar para docker y correr dialyzer
 - https://subvisual.co/blog/posts/137-tutorial-deploying-elixir-applications-with-docker-and-digital-ocean/
+- add credo and run it: https://github.com/rrrene/credo
 
 NOTA por lo aprendido en el workshop:
 definir el scada_collector en un projecto y la parte web en otro, usar phoenix. usar umbrella project

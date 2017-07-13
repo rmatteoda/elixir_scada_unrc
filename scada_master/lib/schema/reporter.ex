@@ -2,6 +2,8 @@ defmodule SCADAMaster.Schema.Reporter do
   use GenServer
   require Logger
 
+  alias SCADAMaster.Schema.StorageBind
+
 # configure time in ms to collect data from scada devies.
   # The time of a report can be set with:
   #`config :scada_master, ScadaMaster, report_after: 1000`
@@ -42,9 +44,9 @@ defmodule SCADAMaster.Schema.Reporter do
   end
 
   defp do_report([subconfig | substation_list]) do
-    case SCADAMaster.Schema.StorageBind.find_substation_id_by_name(subconfig.name) do 
+    case StorageBind.find_substation_id_by_name(subconfig.name) do 
       nil -> Logger.error "Substation not found in DB to generate report"
-      sub_id -> dev_table_result = SCADAMaster.Schema.StorageBind.find_collecteddata_by_subid(sub_id)
+      sub_id -> dev_table_result = StorageBind.find_collecteddata_by_subid(sub_id)
                 do_report_table(dev_table_result,subconfig.name)
     end
 
@@ -76,7 +78,7 @@ defmodule SCADAMaster.Schema.Reporter do
   end
 
   defp do_report_weather() do
-    weather_table = SCADAMaster.Schema.StorageBind.find_weather_data()
+    weather_table = StorageBind.find_weather_data()
     
     file_name = Path.join(report_path(), "weather_data.csv")
     f = File.open!(file_name, [:write, :utf8])
