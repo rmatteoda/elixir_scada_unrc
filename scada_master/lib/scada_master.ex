@@ -10,8 +10,6 @@ defmodule SCADAMaster.Application do
       supervisor(ScadaMaster.Repo, []),
       # Start the endpoint when the application starts
       supervisor(SCADAMaster.Device.Supervisor, []),
-      worker(SCADAMaster.Device.Scheduler, [], restart: :transient),
-      #worker(SCADAMaster.Schema.Reporter, [], restart: :transient)
     ]
     
     opts = [strategy: :one_for_one, name: SCADAMaster.Supervisor]

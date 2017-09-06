@@ -2,6 +2,9 @@ defmodule SCADAMaster.Device.WeatherAccess do
 require Logger
 alias SCADAMaster.Schema.StorageBind
 
+#can set the api weather url in config file?
+#@consumer_key Application.get_env(:noun_projex, :api_key)
+
 @weather_uri "http://api.openweathermap.org/data/2.5/weather?q=Rio%20Cuarto&appid=9f93848b56f03956ac309647a7132103"
 @expected_fields ~w(weather wind main )
 

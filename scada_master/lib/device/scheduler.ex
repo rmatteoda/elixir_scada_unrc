@@ -31,9 +31,9 @@ defmodule SCADAMaster.Device.Scheduler do
   def handle_info(:collect, state) do
     #load substation values using collector 
     #load weather data of Rio Cuarto from openweather api
-    collec()
+    #collec()
     
-    SCADAMaster.Device.WeatherApi.collect_weather
+    SCADAMaster.Device.WeatherAccess.collect_weather
     
     # Schadule the work
     do_schedule()

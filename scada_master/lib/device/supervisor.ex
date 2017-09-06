@@ -15,7 +15,9 @@ defmodule SCADAMaster.Device.Supervisor do
 
   def init(:ok) do
     children = [
-      worker(SCADAMaster.Device.Collector, [], restart: :temporary)
+      worker(SCADAMaster.Device.Collector, [], restart: :temporary),
+      worker(SCADAMaster.Device.Scheduler, [], restart: :transient),
+      worker(SCADAMaster.Schema.Reporter, [], restart: :transient)
     ]
     supervise(children, strategy: :simple_one_for_one)
   end
