@@ -32,12 +32,10 @@ defmodule SCADAMaster.Device.Collector do
     {:noreply, state}
   end
 
-  @doc """
-  Read sempron register using ex_modbus library
-  """
+  #Read sempron register using ex_modbus library
   defp do_read_registers(substation_ip,substation_name) do    
     try do
-      {:ok, pid, status} = do_connect(substation_ip)
+      {pid, status} = do_connect(substation_ip)
       
       case status do
         :on -> do_read_modbus(pid,substation_name)
@@ -50,10 +48,8 @@ defmodule SCADAMaster.Device.Collector do
     
   end
 
-  @doc """
-  buid register map from struc for substation with all offsets and register key defined
-  iterate over map to read all registers
-  """
+  #buid register map from struc for substation with all offsets and register key defined
+  #iterate over map to read all registers
   defp do_read_modbus(pid,substation_name) do
     try do
       Logger.debug "reading modbus register "      
@@ -75,20 +71,15 @@ defmodule SCADAMaster.Device.Collector do
     end
   end
 
-  @doc """
-  Read modbus register using the pid of the connection, register offset
-  """
+  #Read modbus register using the pid of the connection, register offset
   defp do_read_register(pid, register_offset) do        
     try do      
-      #response = ExModbus.Client.read_data pid, 1, register_offset, 2
-      #{:read_holding_registers, [value1, value2]} = Map.get(response, :data)  
-      [modbus_reg_1, modbus_reg_2] = [17249, 886]
+      response = ExModbus.Client.read_data pid, 1, register_offset, 2
+      {:read_holding_registers, [modbus_reg_1, modbus_reg_2]} = Map.get(response, :data)  
+      #[modbus_reg_1, modbus_reg_2] = [17249, 886]
 
-      float_byte1 = modbus_reg_1
-                    |> :binary.encode_unsigned 
-                    |> Base.encode16    
-
-      float_byte2 = modbus_reg_2 |> :binary.encode_unsigned |> Base.encode16
+      float_byte1 = modbus_reg_1 |> :binary.encode_unsigned() |> Base.encode16()    
+      float_byte2 = modbus_reg_2 |> :binary.encode_unsigned() |> Base.encode16()
 
       <<float_val::size(32)-float>> = Base.decode16!(float_byte1 <> float_byte2)
          
@@ -99,20 +90,15 @@ defmodule SCADAMaster.Device.Collector do
     end    
   end
 
-  @doc """
-  Connecto to modbus device 
-  return pid and status of connection
-  """
-  defp do_connect(ip_substation) do
-    Logger.debug "connecting to #{ip_substation}"
-    #{:ok, {ip_a, ip_b, ip_c, ip_d}} = ip_substation 
-    #                                  |> String.to_char_list 
-    #                                  |> :inet_parse.address
-
-    #{:ok, pid} = ExModbus.Client.start_link {ip_a, ip_b, ip_c, ip_d}
-    #status = ExModbus.Client.status pid
-    {:ok, 1, :on}   
-    #{:ok, pid, status}   
+  defp do_connect(substation_ip) do
+    Logger.debug "connecting to #{substation_ip}"
+    
+    {:ok, {ip_a, ip_b, ip_c, ip_d}} = substation_ip |> to_charlist() |> :inet_parse.address()
+    
+    case ExModbus.Client.start_link {ip_a, ip_b, ip_c, ip_d} do
+      {:ok, pid} -> {pid, :on}
+      {:error, _} -> {0, :off}
+    end   
   end
 
 end
