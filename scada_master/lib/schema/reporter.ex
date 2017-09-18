@@ -11,6 +11,16 @@ defmodule SCADAMaster.Schema.Reporter do
   #the path to save the report csv file can be set with:
   #config: report_path "/Users/rammatte/Workspace/UNRC/SCADA/elixir/scada_project/scada_master/"
   
+  @weather_header ["Temperatura", "Presion", "Humedad", "Date"]
+  @meassured_header ["Substation Name", 
+                    "Voltage A", "Voltage B", "Voltage C",
+                    "Current A", "Current B", "Current C",
+                    "Active Power A", "Active Power B", "Active Power C",
+                    "Reactive Power A", "Reactive Power B", "Reactive Power C",
+                    "Total Active Power", "Total Reactive Power",
+                    "Unbalance Voltage", "Unbalance Current", 
+                    "Date"]
+ 
   def start_link do
     GenServer.start_link(__MODULE__, %{})
   end
@@ -63,7 +73,10 @@ defmodule SCADAMaster.Schema.Reporter do
     file_name = Path.join(report_path(), substation_name <> "_data.csv")
     f = File.open!(file_name, [:write, :utf8])
 
+    IO.write(f, CSVLixir.write_row(@meassured_header))
+    
     Enum.each(dev_table_result, fn(measured_values) -> 
+      #{:ok, datetime} = DateTime.from_naive(measured_values.inserted_at)
       IO.write(f, CSVLixir.write_row([substation_name,
                                       measured_values.voltage_a, measured_values.voltage_b, measured_values.voltage_c,
                                       measured_values.current_a, measured_values.current_b, measured_values.current_c,
@@ -71,7 +84,7 @@ defmodule SCADAMaster.Schema.Reporter do
                                       measured_values.reactivepower_a, measured_values.reactivepower_b, measured_values.reactivepower_c,
                                       measured_values.totalactivepower,measured_values.totalreactivepower,
                                       measured_values.unbalance_voltage,measured_values.unbalance_current,
-                                      Ecto.DateTime.to_string(measured_values.inserted_at)]))
+                                      NaiveDateTime.to_string(measured_values.inserted_at)]))
     end)  
     
     File.close(f)
@@ -83,11 +96,13 @@ defmodule SCADAMaster.Schema.Reporter do
     file_name = Path.join(report_path(), "weather_data.csv")
     f = File.open!(file_name, [:write, :utf8])
 
+    IO.write(f, CSVLixir.write_row(@weather_header))
+  
     Enum.each(weather_table, fn(weather) -> 
       IO.write(f, CSVLixir.write_row([weather.temp,
                                       weather.pressure, 
                                       weather.humidity,
-                                      Ecto.DateTime.to_string(weather.inserted_at)]))
+                                      NaiveDateTime.to_string(weather.inserted_at)]))
     end)  
     
     File.close(f)
