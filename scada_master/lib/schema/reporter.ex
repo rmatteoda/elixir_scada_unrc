@@ -1,5 +1,5 @@
 defmodule SCADAMaster.Schema.Reporter do
-  use GenServer
+  use GenServer, restart: :transient
   require Logger
 
   alias SCADAMaster.Schema.StorageBind
@@ -11,6 +11,7 @@ defmodule SCADAMaster.Schema.Reporter do
   #the path to save the report csv file can be set with:
   #config: report_path "/Users/rammatte/Workspace/UNRC/SCADA/elixir/scada_project/scada_master/"
   
+  #column names array for reports
   @weather_header ["Temperatura", "Presion", "Humedad", "Date"]
   @meassured_header ["Substation Name", 
                     "Voltage A", "Voltage B", "Voltage C",
@@ -21,11 +22,12 @@ defmodule SCADAMaster.Schema.Reporter do
                     "Unbalance Voltage", "Unbalance Current", 
                     "Date"]
  
-  def start_link do
-    GenServer.start_link(__MODULE__, %{})
+  def start_link(state) do
+    GenServer.start_link(__MODULE__, state, name: __MODULE__)
   end
 
   def init(state) do
+    Logger.debug "Start Reporter " 
     do_schedule()
     {:ok, state} 
   end

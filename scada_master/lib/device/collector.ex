@@ -8,7 +8,7 @@ defmodule SCADAMaster.Device.Collector do
   Starts the collector.
   """
   def start_link do
-    GenServer.start_link(__MODULE__, :ok, [])
+    GenServer.start_link(__MODULE__, :ok, name: __MODULE__)
   end
 
   @doc """

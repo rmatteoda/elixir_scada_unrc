@@ -1,5 +1,5 @@
 defmodule SCADAMaster.Device.Scheduler do
-  use GenServer
+  use GenServer, restart: :transient
   require Logger
 
 # configure time in ms to collect data from scada devies.
@@ -10,8 +10,8 @@ defmodule SCADAMaster.Device.Scheduler do
   @doc """
   Starts the scheduler.
   """
-  def start_link do
-    GenServer.start_link(__MODULE__, %{})
+  def start_link(state) do
+    GenServer.start_link(__MODULE__, state, name: __MODULE__)
   end
 
   @doc """
@@ -31,7 +31,7 @@ defmodule SCADAMaster.Device.Scheduler do
   def handle_info(:collect, state) do
     #load substation values using collector 
     #load weather data of Rio Cuarto from openweather api
-    #collec()
+    collec()
     
     SCADAMaster.Device.WeatherAccess.collect_weather
     
@@ -52,7 +52,7 @@ defmodule SCADAMaster.Device.Scheduler do
     # get the table configured with all substation ips
     substation_list = Application.get_env(:scada_master,:device_table) #save the device table configured    
     
-    {:ok, collector_pid} = SCADAMaster.Device.Supervisor.start_collector
+    {:ok, collector_pid} = SCADAMaster.Device.Collector.start_link
     do_collect_substations collector_pid, substation_list
   end
 

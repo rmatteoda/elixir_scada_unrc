@@ -1,24 +1,19 @@
 defmodule SCADAMaster.Device.Supervisor do
-
   use Supervisor
 
   # A simple module attribute that stores the supervisor name
   @name SCADAMaster.Device.Supervisor
 
-  def start_link do
-    Supervisor.start_link(__MODULE__, :ok, name: @name)
+  def start_link(arg) do
+    Supervisor.start_link(__MODULE__, arg, name: @name)
   end
 
-  def start_collector do
-    Supervisor.start_child(@name, [])
-  end
-
-  def init(:ok) do
+  def init(_arg) do
     children = [
-      worker(SCADAMaster.Device.Collector, [], restart: :temporary),
-      worker(SCADAMaster.Device.Scheduler, [], restart: :transient),
-      worker(SCADAMaster.Schema.Reporter, [], restart: :transient)
+      {SCADAMaster.Device.Scheduler, []},
+      {SCADAMaster.Schema.Reporter, []}
     ]
-    supervise(children, strategy: :simple_one_for_one)
+    #{:ok, pid} = Supervisor.start_link(children, strategy: :one_for_one)
+    Supervisor.init(children, strategy: :one_for_one)
   end
 end

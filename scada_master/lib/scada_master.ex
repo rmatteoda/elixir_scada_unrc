@@ -4,12 +4,10 @@ defmodule SCADAMaster.Application do
   def start(_type, _args) do
     import Supervisor.Spec, warn: false
 
-    # Define workers and child supervisors to be supervised
+    # Define workers and child supervisors to be supervised (Ecto repository and Main Supervisor)
     children = [
-      # Start the Ecto repository
-      supervisor(ScadaMaster.Repo, []),
-      # Start the endpoint when the application starts
-      supervisor(SCADAMaster.Device.Supervisor, []),
+      ScadaMaster.Repo,
+      {SCADAMaster.Device.Supervisor, []}
     ]
     
     opts = [strategy: :one_for_one, name: SCADAMaster.Supervisor]
