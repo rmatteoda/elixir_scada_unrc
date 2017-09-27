@@ -2,6 +2,9 @@ defmodule SCADAMaster.Device.Scheduler do
   use GenServer, restart: :transient
   require Logger
 
+  alias SCADAMaster.Device.Collector
+  alias SCADAMaster.Device.WeatherAccess
+
 # configure time in ms to collect data from scada devies.
 # The time for collect data from can be set in:
   #`config :scada_master, ScadaMaster, collect_each: 1000`
@@ -19,26 +22,28 @@ defmodule SCADAMaster.Device.Scheduler do
   """
   def init(state) do
     Logger.debug "Start Scheduler handler " 
+    
+    {:ok, collector_pid} = Collector.start_link
 
     config_substations()
 
     # Schedule the work
     do_schedule()
 
-    {:ok, state}      
+    {:ok, collector_pid}      
   end
 
-  def handle_info(:collect, state) do
+  def handle_info(:collect, collector_pid) do
     #load substation values using collector 
-    #load weather data of Rio Cuarto from openweather api
-    collec()
+    collec(collector_pid)
     
-    SCADAMaster.Device.WeatherAccess.collect_weather
+    #load weather data of Rio Cuarto from openweather api
+    WeatherAccess.collect_weather
     
     # Schadule the work
     do_schedule()
 
-    {:noreply, state}
+    {:noreply, collector_pid}
   end
 
   defp do_schedule() do
@@ -48,16 +53,16 @@ defmodule SCADAMaster.Device.Scheduler do
   @doc """
   for each substation configured call the collector to load the substation values from modbus device
   """
-  def collec() do
+  def collec(collector_pid) do
     # get the table configured with all substation ips
     substation_list = Application.get_env(:scada_master,:device_table) #save the device table configured    
     
-    {:ok, collector_pid} = SCADAMaster.Device.Collector.start_link
+    #{:ok, collector_pid} = Collector.start_link
     do_collect_substations collector_pid, substation_list
   end
 
   defp do_collect_substations(collector_pid, [subconfig | substation_list]) do
-    SCADAMaster.Device.Collector.collect(collector_pid,subconfig.name,subconfig.ip)    
+    Collector.collect(collector_pid,subconfig.name,subconfig.ip)    
     do_collect_substations collector_pid, substation_list
   end
 
