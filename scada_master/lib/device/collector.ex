@@ -38,12 +38,14 @@ defmodule SCADAMaster.Device.Collector do
       {pid, status} = do_connect(substation_ip)
       
       case status do
-        :on -> do_read_modbus(pid,substation_name)
+        :on -> Logger.debug "MODBUS on ok: "
+              do_read_modbus(pid,substation_name)
         :off -> Logger.debug "MODBUS Off error: "
                 {:error, "modbus disconected"}
       end         
     rescue
-      e -> {:error, e}
+      e -> Logger.debug "RESCUE READ REGISTER EXCEPTION: "
+          {:error, e}
     end
     
   end
@@ -85,7 +87,7 @@ defmodule SCADAMaster.Device.Collector do
          
       {:ok, float_val} 
     rescue
-      e -> Logger.error "read_register: " <> e
+      e -> Logger.error "exception on read_register: " <> e
       {:ok, [0.0,0.0]} 
     end    
   end
@@ -95,13 +97,15 @@ defmodule SCADAMaster.Device.Collector do
     
     {:ok, {ip_a, ip_b, ip_c, ip_d}} = substation_ip |> to_charlist() |> :inet_parse.address()
     
-    # try do
-    #   ExModbus.Client.start_link {ip_a, ip_b, ip_c, ip_d}
-    # rescue
-    #   _ -> Logger.debug "connecting ERROR: "
-    # end
+    try do
+      {:ok, pid} = ExModbus.Client.start_link {ip_a, ip_b, ip_c, ip_d}
+    catch
+      {:error, _} -> Logger.debug "connecting ERROR 2 "
+      e -> Logger.debug "connecting ERROR #{e}"
+      {1,:off}
+    end
 
-    {1, :on}
+    #{1, :on}
     # {:ok, {ip_a, ip_b, ip_c, ip_d}} = substation_ip |> to_charlist() |> :inet_parse.address()
     
     # case ExModbus.Client.start_link {ip_a, ip_b, ip_c, ip_d} do

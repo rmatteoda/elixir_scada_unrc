@@ -13,7 +13,6 @@ defmodule SCADAMaster.Device.Supervisor do
       {SCADAMaster.Device.Scheduler, []},
       {SCADAMaster.Schema.Reporter, []}
     ]
-    #{:ok, pid} = Supervisor.start_link(children, strategy: :one_for_one)
     Supervisor.init(children, strategy: :one_for_one)
   end
 end

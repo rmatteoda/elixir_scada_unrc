@@ -34,6 +34,7 @@ defmodule SCADAMaster.Device.Scheduler do
   end
 
   def handle_info(:collect, collector_pid) do
+    Logger.debug "Handle Info Scheduler handler " 
     #load substation values using collector 
     collec(collector_pid)
     
@@ -57,7 +58,6 @@ defmodule SCADAMaster.Device.Scheduler do
     # get the table configured with all substation ips
     substation_list = Application.get_env(:scada_master,:device_table) #save the device table configured    
     
-    #{:ok, collector_pid} = Collector.start_link
     do_collect_substations collector_pid, substation_list
   end
 

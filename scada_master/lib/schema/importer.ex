@@ -4,10 +4,8 @@ defmodule SCADAMaster.Schema.Importer do
 
   # Import substations. 
   def import_substations([subconfig | substation_list]) do
-	try do
-	  %Substation{}
-      		|> Substation.changeset(%{name: subconfig.name})
-      		|> ScadaMaster.Repo.insert
+	  try do
+	    %Substation{} |> Substation.changeset(%{name: subconfig.name}) |> ScadaMaster.Repo.insert(log: false)
     rescue
       DBConnection.ConnectionError ->
         Logger.error "import_substations: Database is down"

@@ -13,8 +13,9 @@ Call wheather api Rio Cuarto
 http://api.openweathermap.org/data/2.5/weather?q=Rio%20Cuarto&appid=9f93848b56f03956ac309647a7132103
 
 To Do
-- refactor querys on storage package
 - refactor reporter: fix hour to local time on csv file and send email once a day with report to fernando
+- chaneg ex_modbus by https://github.com/samuelventura/modbus
+- refactor querys on storage package
 - add test (add catch if query does not work)
 - refactor and review SupervisorTree according to libra app
 - refactor and review GenServers according to libra app
