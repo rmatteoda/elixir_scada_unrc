@@ -6,7 +6,9 @@ defmodule SCADAMaster.Schema.UserEmail do
   import Swoosh.Email
 
   def welcome_email do
-    new()
+  	#attachment = Attachment.new("/data/file")
+    
+    new(attachment: "/Users/rammatte/Workspace/UNRC/SCADA/elixir/scada_project/scada_master/mix.exs")
     |> to("rmatteoda@gmail.com")
     |> from({"SCADA", "metodosunrc@egmail.com"})
     |> subject("Reporte SCADA")
