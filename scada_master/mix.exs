@@ -7,17 +7,17 @@ defmodule SCADAMaster.Mixfile do
      elixir: "~> 1.2",
      build_embedded: Mix.env == :prod,
      start_permanent: Mix.env == :prod,
-     deps: deps,
      aliases: aliases(),
      docs: [main: "readme",
-            extras: ["README.md"]]]
+            extras: ["README.md"]],
+     deps: deps]
   end
 
   # Configuration for the OTP application
   # Type "mix help compile.app" for more information
   def application do
     [mod: {SCADAMaster.Application, []},
-     applications: [:postgrex, :ecto, :logger, :logger_file_backend, :ex_modbus, :httpoison]]
+     applications: [:postgrex, :ecto, :logger, :logger_file_backend, :ex_modbus, :httpoison, :swoosh]]
   end
 
   # Aliases are shortcuts or tasks specific to the current project.
@@ -43,7 +43,11 @@ defmodule SCADAMaster.Mixfile do
      {:logger_file_backend, ">= 0.0.4"},
      {:exrm, "~> 1.0.8"},
      {:csvlixir, "~> 2.0.3"},
-     {:httpoison, "~> 0.9.0"},
-     {:poison, "~> 2.0"}]
+     {:httpoison, "~> 0.9.0", override: true},
+     {:poison, "~> 2.0"},
+     {:bamboo, "~> 0.8"},
+     {:bamboo_smtp, "~> 1.4.0"},
+     {:hackney, "~> 1.7.0", override: true},
+     {:swoosh, "~> 0.10.0", override: true}]
   end
 end
