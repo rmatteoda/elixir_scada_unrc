@@ -85,6 +85,7 @@ defmodule SCADAMaster.Schema.Reporter do
   defp do_report_email do
     substation_list = Application.get_env(:scada_master,:device_table) #save the device_table table configured        
     do_report_email substation_list
+    do_report_email_weather()
   end
 
   defp do_report_email([subconfig | substation_list]) do
@@ -95,6 +96,12 @@ defmodule SCADAMaster.Schema.Reporter do
   end
 
   defp do_report_email([]), do: nil
+
+  defp do_report_email_weather do
+    file_name = Path.join(report_path(), "weather_data.csv")
+    Logger.debug "Sending email report with weather data"
+    ReportEmail.report(file_name,"weather") |> Mailer.deliver
+  end
 
   @doc """
   made a query to db and get all values of substation
