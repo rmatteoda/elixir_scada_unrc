@@ -8,7 +8,8 @@ config :scada_master,
 
 # configure ip of diferent device connected to substation to be monitored.
 config :scada_master, :device_table,
-       [%{ip: "192.168.0.5", name: "sub_anf"}]
+      [%{ip: "192.168.0.5", name: "sub_anf"},
+       %{ip: "192.168.0.5", name: "sub_jardin"}]
 
 # logger configuration 
 config :logger,
@@ -23,12 +24,17 @@ config :logger, :error,
   path: "log/error.log",
   level: :error
 
-#config time for reporter and collector
+#config time for to collect data from substations (recommended 10 minutes)
 config :scada_master, ScadaMaster,
-  collect_each: 1000 * 60 * 1 # 1 minutes
+  collect_each: 1000 * 60 * 100 # 1 minutes
 
+#config time to save data into csv file (recomended 2 hours)
 config :scada_master, ScadaMaster,
-  report_after: 1000 * 60 * 30 # 20 minutes
+  report_after: 1000 * 60 * 120 # 120 minutes
+
+#config time to send email report with csv file (recomended 12 hours)
+config :scada_master, ScadaMaster,
+  report_email_after: 1000 * 60 * 1 #  minutes
 
 config :scada_master, ScadaMaster,
   report_path: "/Users/rammatte/Workspace/UNRC/SCADA/elixir/scada_project/scada_master/" 

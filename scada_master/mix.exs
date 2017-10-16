@@ -45,7 +45,6 @@ defmodule SCADAMaster.Mixfile do
      {:csvlixir, "~> 2.0.3"},
      {:httpoison, "~> 0.9.0", override: true},
      {:poison, "~> 2.0"},
-     {:bamboo, "~> 0.8"},
      {:bamboo_smtp, "~> 1.4.0"},
      {:hackney, "~> 1.7.0", override: true},
      {:swoosh, "~> 0.10.0", override: true}]

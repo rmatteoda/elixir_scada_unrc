@@ -24,14 +24,8 @@ defmodule SCADAMaster.Device.Scheduler do
     Logger.debug "Start Scheduler handler " 
     
     {:ok, collector_pid} = Collector.start_link
-
     config_substations()
 
-    # In a controller or some other module
-    Logger.debug "Sending email... " 
-    SCADAMaster.Schema.UserEmail.welcome_email |> SCADAMaster.Schema.Mailer.deliver
-    Logger.debug "Mail delivered... " 
-    
     # Schedule the work
     do_schedule()
 
