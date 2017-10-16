@@ -12,12 +12,16 @@ alias SCADAMaster.Schema.StorageBind
   Call api to get weather info of Rio Cuarto using http://openweathermap.org
   """
   def collect_weather do
+    Logger.debug "Collecting weather data " 
+    
     case HTTPoison.get(@weather_uri) do
       {:ok, %HTTPoison.Response{status_code: 200, body: body}} ->
         do_process_response body
       {:ok, %HTTPoison.Response{status_code: 404}} ->
+        do_save_weather_on_error()
         Logger.error "Weather API Call error: URI Not found "
       {:error, %HTTPoison.Error{reason: reason}} ->
+        do_save_weather_on_error()
         Logger.error "Weather API Call error: #{reason}"
     end
   end
@@ -36,6 +40,11 @@ alias SCADAMaster.Schema.StorageBind
     |> StorageBind.storage_collected_weather
   end
   
+  #save weather with 0 when there is a connection error
+  defp do_save_weather_on_error do    
+    StorageBind.storage_collected_weather(%{humidity: 0, pressure: 0, temp: 0})
+  end
+
   @doc """
   Convert weather values from api to local standars (i.e: convert :temp from kelvin to celcius)
   """

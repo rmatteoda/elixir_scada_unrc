@@ -26,7 +26,7 @@ config :logger, :error,
 
 #config time for to collect data from substations (recommended 10 minutes)
 config :scada_master, ScadaMaster,
-  collect_each: 1000 * 60 * 10 # 10 minutes
+  collect_each: 1000 * 60 * 1 # 10 minutes
 
 #config time to save data into csv file (recomended 2 hours)
 config :scada_master, ScadaMaster,
