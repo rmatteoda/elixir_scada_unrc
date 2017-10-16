@@ -26,7 +26,7 @@ config :logger, :error,
 
 #config time for to collect data from substations (recommended 10 minutes)
 config :scada_master, ScadaMaster,
-  collect_each: 1000 * 60 * 100 # 1 minutes
+  collect_each: 1000 * 60 * 10 # 10 minutes
 
 #config time to save data into csv file (recomended 2 hours)
 config :scada_master, ScadaMaster,
@@ -34,7 +34,7 @@ config :scada_master, ScadaMaster,
 
 #config time to send email report with csv file (recomended 12 hours)
 config :scada_master, ScadaMaster,
-  report_email_after: 1000 * 60 * 1 #  minutes
+  report_email_after: 1000 * 60 * 720 # 12 horas
 
 config :scada_master, ScadaMaster,
   report_path: "/Users/rammatte/Workspace/UNRC/SCADA/elixir/scada_project/scada_master/" 
