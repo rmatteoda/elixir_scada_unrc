@@ -13,15 +13,13 @@ Call wheather api Rio Cuarto
 http://api.openweathermap.org/data/2.5/weather?q=Rio%20Cuarto&appid=9f93848b56f03956ac309647a7132103
 
 To Do
-- refactor reporter: fix hour to local time on csv file and send email once a day with report to fernando
+- refactor reporter: fix hour to local time on csv file
 - chaneg ex_modbus by https://github.com/samuelventura/modbus or add code to my lib in order to modify
 - refactor querys on storage package
 - add test (add catch if query does not work)
 - refactor and review SupervisorTree according to libra app
-- refactor and review GenServers according to libra app
-- Hacer Test cases para todo (DB-Ecto test, ver curso)
 - Documentar codigo
-- configurar para docker y correr dialyzer
+- configurar para docker y dialyzer
 - https://subvisual.co/blog/posts/137-tutorial-deploying-elixir-applications-with-docker-and-digital-ocean/
 - add credo and run it: https://github.com/rrrene/credo
 
