@@ -41,8 +41,7 @@ defmodule SCADAMaster.Device.Collector do
   #iterate over map to read all registers
   defp do_read_modbus(pid,substation_name,status) do
     try do
-      Logger.debug "reading modbus register "      
-      
+      #Logger.debug "reading modbus register "          
       register_map = Map.from_struct(SCADAMaster.Device.SubstationStruct)
       substationdata = Map.new(register_map, fn {key, val} -> 
                                                {:ok, val} = do_read_register(pid,val,status)
@@ -60,8 +59,8 @@ defmodule SCADAMaster.Device.Collector do
   end
 
   #Read modbus register using the pid of the connection, register offset
-  defp do_read_register(pid, register_offset, :on) do        
-    Logger.debug "Reading on MODBUS On "   
+  defp do_read_register(pid, register_offset, :connected) do        
+    Logger.debug "Reading on MODBUS connected "   
     try do      
       response = ExModbus.Client.read_data pid, 1, register_offset, 2
       {:read_holding_registers, [modbus_reg_1, modbus_reg_2]} = Map.get(response, :data)  
@@ -80,8 +79,7 @@ defmodule SCADAMaster.Device.Collector do
   end
 
   #Create default map with values on connection error (nodbus status off)
-  defp do_read_register(_pid, _register_offset, :off) do     
-    Logger.debug "MODBUS Off "   
+  defp do_read_register(_pid, _register_offset, :failed_connect) do     
     {:ok, 0.0} 
   end
 
@@ -89,15 +87,11 @@ defmodule SCADAMaster.Device.Collector do
     Logger.debug "connecting to #{substation_ip}"
     {:ok, {ip_a, ip_b, ip_c, ip_d}} = substation_ip |> to_charlist() |> :inet_parse.address()
     
-    try do
-      {:ok, pid} = ExModbus.Client.start_link {ip_a, ip_b, ip_c, ip_d}
-      {pid, :on}
-    catch
-      {:error, _} -> Logger.error "connecting error with substation "
-                     {0,:off}
-      e -> Logger.error "connecting ERROR #{e}"
-           {0,:off}
-    end  
+    {:ok, pid} = ExModbus.Client.start_link {ip_a, ip_b, ip_c, ip_d}
+    socket_state = ExModbus.Client.socket_state pid
+    Logger.debug "connected state #{socket_state}"
+    
+    {pid, socket_state}
   end
 end
 
