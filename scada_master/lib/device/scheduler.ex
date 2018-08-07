@@ -35,7 +35,7 @@ defmodule SCADAMaster.Device.Scheduler do
   def handle_info(:collect, collector_pid) do
     Logger.debug "Handle Info Scheduler handler " 
     #load substation values using collector 
-    #collec(collector_pid)
+    collec(collector_pid)
     
     #load weather data of Rio Cuarto from openweather api
     WeatherAccess.collect_weather
