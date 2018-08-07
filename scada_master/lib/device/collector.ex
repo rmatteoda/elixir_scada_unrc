@@ -74,7 +74,7 @@ defmodule SCADAMaster.Device.Collector do
       {:ok, float_val} 
     rescue
       e -> Logger.error "exception on read_register: " <> e
-      {:ok, 0.1} 
+      {:ok, 0.0} 
     end    
   end
 

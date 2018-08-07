@@ -2,11 +2,16 @@ defmodule SCADAMaster.Device.WeatherAccess do
 require Logger
 alias SCADAMaster.Schema.StorageBind
 
-#can set the api weather url in config file?
-#@consumer_key Application.get_env(:noun_projex, :api_key)
+# can set the api weather url in config file?
+# @consumer_key Application.get_env(:noun_projex, :api_key)
 
-@weather_uri "http://api.openweathermap.org/data/2.5/weather?q=Rio%20Cuarto&appid=9f93848b56f03956ac309647a7132103"
-@expected_fields ~w(weather wind main )
+# openweathermap (da algunas veces datos erroneos)
+# @weather_uri "http://api.openweathermap.org/data/2.5/weather?q=Rio%20Cuarto&appid=9f93848b56f03956ac309647a7132103"
+# @expected_fields ~w(weather wind main )
+
+#nueva weather api usando apixu
+@weather_uri "http://api.apixu.com/v1/current.json?key=5be949e243154ac4af8154311180708&q=Rio%20Cuarto"
+@expected_fields ~w(current)
 
   @doc """
   Call api to get weather info of Rio Cuarto using http://openweathermap.org
@@ -35,7 +40,7 @@ alias SCADAMaster.Schema.StorageBind
   end
 
   defp do_save_weather(weather_map) do 
-    Enum.map(weather_map["main"], fn {key, val} -> convert(String.to_atom(key),val) end) 
+    Enum.map(weather_map["current"], fn {key, val} -> convert(String.to_atom(key),val) end) 
     |> Map.new 
     |> StorageBind.storage_collected_weather
   end
@@ -52,6 +57,7 @@ alias SCADAMaster.Schema.StorageBind
     do_convert(k,v)
   end
 
-  defp do_convert(:temp, kelvin_v), do: {:temp, kelvin_v - 273.15}
+  defp do_convert(:temp_c, v), do: {:temp, v}
+  defp do_convert(:pressure_mb, v), do: {:pressure, v}
   defp do_convert(k, v), do: {k,v}
 end
