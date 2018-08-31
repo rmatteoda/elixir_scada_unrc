@@ -72,7 +72,7 @@ defmodule SCADAMaster.Schema.Reporter do
   defp do_report([subconfig | substation_list]) do
     case StorageBind.find_substation_id_by_name(subconfig.name) do 
       nil -> Logger.error "Substation not found in DB to generate report"
-      sub_id -> dev_table_result = StorageBind.find_collecteddata_by_subid(sub_id)
+      sub_id -> dev_table_result = StorageBind.find_collected_by_subid(sub_id, :last_week)
                 do_report_table(dev_table_result,subconfig.name)
     end
 
@@ -114,7 +114,6 @@ defmodule SCADAMaster.Schema.Reporter do
     IO.write(f, CSVLixir.write_row(@meassured_header))
     
     Enum.each(dev_table_result, fn(measured_values) -> 
-      #{:ok, datetime} = DateTime.from_naive(measured_values.inserted_at)
       IO.write(f, CSVLixir.write_row([substation_name,
                                       measured_values.voltage_a, measured_values.voltage_b, measured_values.voltage_c,
                                       measured_values.current_a, measured_values.current_b, measured_values.current_c,
@@ -129,7 +128,7 @@ defmodule SCADAMaster.Schema.Reporter do
   end
 
   defp do_report_weather() do
-    weather_table = StorageBind.find_weather_data()
+    weather_table = StorageBind.find_weather_data(:last_week)
     
     file_name = Path.join(report_path(), "weather_data.csv")
     f = File.open!(file_name, [:write, :utf8])
