@@ -63,33 +63,44 @@ defmodule SCADAMaster.Schema.Reporter do
   def report() do
     # get the table configured with all substation ips
     substation_list = Application.get_env(:scada_master,:device_table) #save the device_table table configured        
-    do_report substation_list
+    do_report substation_list, :all
 
     #report weather data
-    do_report_weather()
+    do_report_weather(:all)
   end
 
-  defp do_report([subconfig | substation_list]) do
+  defp do_report([subconfig | substation_list], :all) do
+    case StorageBind.find_substation_id_by_name(subconfig.name) do 
+      nil -> Logger.error "Substation not found in DB to generate report"
+      sub_id -> dev_table_result = StorageBind.find_collected_by_subid(sub_id, :all)
+                do_report_table(dev_table_result,subconfig.name,"_all.csv")
+    end
+
+    do_report substation_list, :all
+  end
+
+  defp do_report([subconfig | substation_list], :last_week) do
     case StorageBind.find_substation_id_by_name(subconfig.name) do 
       nil -> Logger.error "Substation not found in DB to generate report"
       sub_id -> dev_table_result = StorageBind.find_collected_by_subid(sub_id, :last_week)
-                do_report_table(dev_table_result,subconfig.name)
+                do_report_table(dev_table_result,subconfig.name,"_last_week.csv")
     end
 
-    do_report substation_list
+    do_report substation_list, :last_week
   end
 
-  defp do_report([]), do: nil
+  defp do_report([], _), do: nil
 
   #send email with csv tables to fernando magnago
   defp do_report_email do
     substation_list = Application.get_env(:scada_master,:device_table) #save the device_table table configured        
+    do_report substation_list, :last_week
     do_report_email substation_list
     do_report_email_weather()
   end
 
   defp do_report_email([subconfig | substation_list]) do
-    file_name = Path.join(report_path(), subconfig.name <> "_data.csv")
+    file_name = Path.join(report_path(), subconfig.name <> "_last_week.csv")
     Logger.debug "Sending email report for substation" <> subconfig.name
     ReportEmail.report(file_name,subconfig.name) |> Mailer.deliver
     do_report_email substation_list
@@ -98,17 +109,14 @@ defmodule SCADAMaster.Schema.Reporter do
   defp do_report_email([]), do: nil
 
   defp do_report_email_weather do
-    file_name = Path.join(report_path(), "weather_data.csv")
+    do_report_weather(:last_week)
+    file_name = Path.join(report_path(), "weather_last_week.csv")
     Logger.debug "Sending email report with weather data"
     ReportEmail.report(file_name,"weather") |> Mailer.deliver
   end
 
-  @doc """
-  made a query to db and get all values of substation
-  dump values into csv file report
-  """
-  def do_report_table(dev_table_result, substation_name) do
-    file_name = Path.join(report_path(), substation_name <> "_data.csv")
+  defp do_report_table(dev_table_result, substation_name, end_filename) do
+    file_name = Path.join(report_path(), substation_name <> end_filename)
     f = File.open!(file_name, [:write, :utf8])
 
     IO.write(f, CSVLixir.write_row(@meassured_header))
@@ -127,12 +135,20 @@ defmodule SCADAMaster.Schema.Reporter do
     File.close(f)
   end
 
-  defp do_report_weather() do
-    weather_table = StorageBind.find_weather_data(:last_week)
-    
-    file_name = Path.join(report_path(), "weather_data.csv")
-    f = File.open!(file_name, [:write, :utf8])
+  defp do_report_weather(:all) do
+    weather_table = StorageBind.find_weather_data(:all)    
+    file_name = Path.join(report_path(), "weather_all.csv")
+    dump_report_weather(weather_table, file_name)
+  end
 
+  defp do_report_weather(:last_week) do
+    weather_table = StorageBind.find_weather_data(:last_week)    
+    file_name = Path.join(report_path(), "weather_last_week.csv")
+    dump_report_weather(weather_table, file_name)
+  end
+
+  defp dump_report_weather(weather_table, file_name) do
+    f = File.open!(file_name, [:write, :utf8])
     IO.write(f, CSVLixir.write_row(@weather_header))
   
     Enum.each(weather_table, fn(weather) -> 

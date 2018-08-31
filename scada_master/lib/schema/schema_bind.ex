@@ -15,7 +15,7 @@ defmodule SCADAMaster.Schema.StorageBind do
   @doc """
   Return all collected data from substation
   """
-  def find_collected_by_subid(substation_id) do
+  def find_collected_by_subid(substation_id, :all) do
     query = from dev in SCADAMaster.Schema.MeasuredValues,
         where: dev.substation_id == ^substation_id,
         order_by: [asc: :updated_at],
