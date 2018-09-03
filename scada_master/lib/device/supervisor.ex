@@ -11,7 +11,8 @@ defmodule SCADAMaster.Device.Supervisor do
   def init(_arg) do
     children = [
       {SCADAMaster.Device.Scheduler, []},
-      {SCADAMaster.Schema.Reporter, []}
+      {SCADAMaster.Schema.Reporter, []},
+      {SCADAMaster.Schema.EmailReporter, []}
     ]
     Supervisor.init(children, strategy: :one_for_one)
   end
