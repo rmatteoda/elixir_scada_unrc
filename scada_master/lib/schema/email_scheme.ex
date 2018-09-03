@@ -7,7 +7,7 @@ defmodule SCADAMaster.Schema.EmailScheme do
 
   def report(csv_file, substation_name) do 
     new(attachment: csv_file)
-    |> to("rmatteoda@gmail.com")
+    |> to("fernando.magnago@gmail.com")
     |> cc("rmatteoda@gmail.com")
     |> from({"SCADA", "metodosunrc@gmail.com"})
     |> subject("Reporte for substation: " <> substation_name)
