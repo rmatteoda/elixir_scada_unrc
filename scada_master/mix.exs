@@ -10,7 +10,7 @@ defmodule SCADAMaster.Mixfile do
      aliases: aliases(),
      docs: [main: "readme",
             extras: ["README.md"]],
-     deps: deps]
+     deps: deps()]
   end
 
   # Configuration for the OTP application
@@ -46,6 +46,7 @@ defmodule SCADAMaster.Mixfile do
      {:poison, "~> 2.0"},
      {:bamboo_smtp, "~> 1.4.0"},
      {:hackney, "~> 1.7.0", override: true},
-     {:swoosh, "~> 0.10.0", override: true}]
+     {:swoosh, "~> 0.10.0", override: true},
+     {:dialyxir, "~> 0.5", only: [:dev], runtime: false}]
   end
 end

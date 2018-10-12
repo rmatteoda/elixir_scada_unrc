@@ -13,9 +13,6 @@ defmodule Modbus.Packet do
 
   @write_single_coil                0x05
   @write_single_coil_exception      0x85
-  @write_single_register            0x06
-  @write_multiple_coils             0x0f
-  @write_multiple_registers         0x10
 
   @single_coil_off                  0x0000
   @single_coil_on                   0xff00

@@ -20,7 +20,7 @@ defmodule SCADAMaster.Device.Scheduler do
   @doc """
   This process will call the collector to get modbus valus every @collect_time configured
   """
-  def init(state) do
+  def init(_state) do
     Logger.debug "Start Scheduler handler " 
     
     {:ok, collector_pid} = Collector.start_link

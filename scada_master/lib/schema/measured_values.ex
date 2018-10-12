@@ -24,13 +24,12 @@ defmodule SCADAMaster.Schema.MeasuredValues do
     timestamps()
   end
 
-  @required_fields [:voltage_a, :voltage_b, :voltage_c, :current_a, :current_b, :current_c, :substation_id]
-  @optional_fields [:activepower_a, :activepower_b, :activepower_c, :reactivepower_a, :reactivepower_b, 
+  @required_fields [:voltage_a, :voltage_b, :voltage_c, :current_a, :current_b, :current_c, :substation_id, :activepower_a, :activepower_b, :activepower_c, :reactivepower_a, :reactivepower_b, 
   :reactivepower_c, :totalactivepower, :totalreactivepower, :unbalance_voltage, :unbalance_current]
 
   def changeset(measured_value, params \\ :empty) do
     measured_value
-    |> cast(params, @required_fields, @optional_fields)
+    |> cast(params, @required_fields)
     |> validate_required(@required_fields)
   end
 end
