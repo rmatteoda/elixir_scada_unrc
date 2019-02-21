@@ -7,11 +7,30 @@
 * `mix run priv/repo/seeds.exs`
 
 export PATH=$PATH:/Applications/Postgres.app/Contents/Versions/latest/bin
+fish console: set PATH /Applications/Postgres.app/Contents/Versions/latest/bin $PATH
 
 Call wheather api Rio Cuarto
 http://api.openweathermap.org/data/2.5/weather?q=Rio%20Cuarto&appid=9f93848b56f03956ac309647a7132103
 
 To Do
-- Hacer Test cases 
+- refactor reporter: fix hour to local time on csv file
+- refactor querys on storage package
+- add test (add catch if query does not work)
+- refactor and review SupervisorTree according to libra app
 - Documentar codigo
+- configurar para docker y dialyzer
+- https://subvisual.co/blog/posts/137-tutorial-deploying-elixir-applications-with-docker-and-digital-ocean/
+- add credo and run it: https://github.com/rrrene/credo
+
+NOTA por lo aprendido en el workshop:
+definir el scada_collector en un projecto y la parte web en otro, usar phoenix. usar umbrella project
+agregar specs
+desacoplar la base de datos, hacer la app independiente, si traigo la info del scada la tengo en memoria y despues la guardo en la db, si la db no esta disponible, puedo esperar porque tengo la info
+ver de usar Task y que tengo que supervisar
+con un supervisor solo me deberia alcanzar.. revisar arbol
+revisar como hace el cast a :persist en el worker
+revisar como usa y en que caso cada funcion de los GenServer
+hacer todo independiente de la DB.
+
+puedo usar el unbrella para tener separado el scada y la web, pero cuando hago deploy es buena practica deployarlo en nodos separados, que cada uno escale independientemente
 

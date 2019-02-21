@@ -1,16 +1,30 @@
 # SCADAMaster
 
-## Installation
+## Dependencies
+The project needs elixir 1.2, Postgresql >= 9
 
-If [available in Hex](https://hex.pm/docs/publish), the package can be installed as:
+## Initial setup
 
-  1. Add scada_master to your list of dependencies in `mix.exs`:
-        def deps do
-          [{:scada_master, "~> 0.0.1"}]
-        end
+check configuration under /config
+  - define the postgres database credentials
+  - define the IP addess and name of the substations
 
-  2. Ensure scada_master is started before your application:
-        def application do
-          [applications: [:scada_master]]
-        end
+run `make setup` to install
+run `mix do ecto.reset` to reset the DB and seed initial data
+all dependencies and perform the initial setup steps.
 
+## Run tests
+
+`make test`
+
+## Create docs
+
+`make docs`
+
+## Run dialyzer
+
+`make dialyzer`
+
+# Build a release
+
+`make release`

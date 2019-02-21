@@ -1,9 +1,18 @@
-defmodule Repo.CreateTables do
+defmodule ScadaMaster.Repo.Migrations.CreateTablesDevice do
+#defmodule Repo.CreateTables do
   use Ecto.Migration
 
   def up do
-    create table(:device) do
-      add :substation_id, :integer
+    #substation has a unique name for now
+    create table(:substations) do
+      add :name, :string, size: 40, null: false, unique: true
+
+      timestamps()
+    end
+
+    #measured_values belong to a substation
+    create table(:measured_values) do
+      add :substation_id, references(:substations)
       add :voltage_a,   :float
       add :voltage_b,   :float
       add :voltage_c,   :float
@@ -20,28 +29,32 @@ defmodule Repo.CreateTables do
       add :totalreactivepower, :float
       add :unbalance_voltage, :float
       add :unbalance_current, :float
-      timestamps
-    end
-    create index(:device, [:substation_id])
 
-    create table(:substations) do
-      add :name, :string, size: 40, null: false, unique: true
+      timestamps()
     end
 
+    # We also add an index so we can find substations
+    create index(:measured_values, [:substation_id])
+
+    create unique_index(:substations, [:name])
+
+    #we save the weather data from openweather api
     create table(:weather) do
       add :temp, :float
       add :humidity,   :float
       add :pressure,   :float
       add :wind_speed, :float
       add :cloudiness, :string
-      timestamps
+
+      timestamps()
     end
 
-    create unique_index(:substations, [:name], name: :unique_names)
   end
 
   def down do
-    drop index(:device, [:substation_id])
+    drop index(:measured_values, [:substation_id])
     drop table(:substations)
+    drop table(:weather)
   end
 end
+
