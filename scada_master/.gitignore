@@ -6,4 +6,6 @@
 erl_crash.dump
 *.ez
 *.csv
+*.zip
+.elixir_ls/
 

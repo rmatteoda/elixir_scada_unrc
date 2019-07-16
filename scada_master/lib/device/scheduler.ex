@@ -5,10 +5,10 @@ defmodule SCADAMaster.Device.Scheduler do
   alias SCADAMaster.Device.Collector
   alias SCADAMaster.Device.WeatherAccess
 
-# configure time in ms to collect data from scada devies.
-# The time for collect data from can be set in:
-  #`config :scada_master, ScadaMaster, collect_each: 1000`
-  
+  # configure time in ms to collect data from energy meter devies.
+  # The time for collect data from can be set in:
+  # config :scada_master, ScadaMaster, collect_each: 1000`
+
   ## Client API
   @doc """
   Starts the scheduler.
@@ -18,28 +18,28 @@ defmodule SCADAMaster.Device.Scheduler do
   end
 
   @doc """
-  This process will call the collector to get modbus valus every @collect_time configured
+  This process will call the collector to get electry meter values through modbus every @collect_time configured
   """
   def init(_state) do
-    Logger.debug "Start Scheduler handler " 
-    
+    Logger.debug "Scheduler handler started"
+
     {:ok, collector_pid} = Collector.start_link
     config_substations()
 
     # Schedule the work
     do_schedule()
 
-    {:ok, collector_pid}      
+    {:ok, collector_pid}
   end
 
   def handle_info(:collect, collector_pid) do
-    Logger.debug "Handle Info Scheduler handler " 
-    #load substation values using collector 
+    Logger.debug "Handle Info Scheduler handler "
+    #load substation values using collector
     collec(collector_pid)
-    
+
     #load weather data of Rio Cuarto from openweather api
     WeatherAccess.collect_weather
-    
+
     # Schadule the work
     do_schedule()
 
@@ -47,7 +47,7 @@ defmodule SCADAMaster.Device.Scheduler do
   end
 
   defp do_schedule() do
-    Process.send_after(self(), :collect, collect_each()) 
+    Process.send_after(self(), :collect, collect_each())
   end
 
   @doc """
@@ -55,13 +55,15 @@ defmodule SCADAMaster.Device.Scheduler do
   """
   def collec(collector_pid) do
     # get the table configured with all substation ips
-    substation_list = Application.get_env(:scada_master,:device_table) #save the device table configured    
-    
+    substation_list = Application.get_env(:scada_master,:device_table) #save the device table configured
+
     do_collect_substations collector_pid, substation_list
   end
 
+  #TODO add parameter to call collector that represent device type in substations (SIEMENS, CIRCUICORT)
+  # and acc a collector for diferent device if needed
   defp do_collect_substations(collector_pid, [subconfig | substation_list]) do
-    Collector.collect(collector_pid,subconfig.name,subconfig.ip)    
+    Collector.collect(collector_pid,subconfig.name,subconfig.ip)
     do_collect_substations collector_pid, substation_list
   end
 
